@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+    [SerializeField] private GameObject _explosionEffectPrefab;
+
+    private void OnCollisionEnter(Collision other)
     {
-        if (other.CompareTag("Player"))
-        {  
-            Destroy(gameObject);
-        }
+        GameObject effectObject = Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
+        effectObject.transform.position = transform.position;
+
+        Destroy(gameObject);
     }
 }
