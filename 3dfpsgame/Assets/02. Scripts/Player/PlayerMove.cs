@@ -1,28 +1,31 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField]
+    [Serializable]
     public class MoveConfig
     {
         public float Gravity = -9.81f;
-        public float YVelocity = 0f;
-        public float RunStaminaValue = 1f;
+        public float RunStaminaValue = 10f;
         public float JumpStaminaValue = 10f;
         public int MaxJumpCount = 2;
-        public int JumpCount = 0;
+
     }
-    private MoveConfig _moveConfig;
+    public MoveConfig _config;
+
     private CharacterController _characterController;
     private PlayerStats _stats;
     private Transform _cameraTransform;
+
+    private int _jumpCount = 0;
+    private float _yVelocity = 0f;
 
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
         _stats = GetComponent<PlayerStats>();
-        _moveConfig = new MoveConfig();
         _cameraTransform = Camera.main.transform;
     }
 
@@ -39,7 +42,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Move()
     {
-        _moveConfig.YVelocity += _moveConfig.Gravity * Time.deltaTime;
+        _yVelocity += _config.Gravity * Time.deltaTime;
 
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
@@ -48,7 +51,7 @@ public class PlayerMove : MonoBehaviour
         direction.Normalize();
 
         direction = _cameraTransform.transform.TransformDirection(direction);
-        direction.y = _moveConfig.YVelocity;
+        direction.y = _yVelocity;
 
         _characterController.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
         TryJump();
@@ -58,31 +61,27 @@ public class PlayerMove : MonoBehaviour
     {
         if (_characterController.isGrounded)
         {
-            _moveConfig.JumpCount = 0;
-            if (_moveConfig.YVelocity < 0) _moveConfig.YVelocity = -1f;
+            _jumpCount = 0;
+            if (_yVelocity < 0) _yVelocity = -1f;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && _moveConfig.JumpCount < _moveConfig.MaxJumpCount)
+        if (Input.GetKeyDown(KeyCode.Space) && _jumpCount < _config.MaxJumpCount)
         {
-            _moveConfig.YVelocity = _stats.JumpForce.Value;
-            _moveConfig.JumpCount++;
+            _yVelocity = _stats.JumpForce.Value;
+            _jumpCount++;
 
-            if (_moveConfig.JumpCount > 1)
+            if (_jumpCount > 1)
             {
-                _stats.Stamina.TryConsume(_moveConfig.JumpStaminaValue);
+                _stats.Stamina.TryConsume(_config.JumpStaminaValue);
             }
         }
     }
 
     private void Run()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && _stats.Stamina.TryConsume(_moveConfig.RunStaminaValue * Time.deltaTime))
+        if (Input.GetKey(KeyCode.LeftShift) && _stats.Stamina.TryConsume(_config.RunStaminaValue * Time.deltaTime))
         {
             _stats.MoveSpeed.SetValue(_stats.RunSpeed.Value);
-        }
-        else
-        {
-            _stats.MoveSpeed.SetValue(_stats.WalkSpeed.Value);
         }
     }
 }

@@ -20,7 +20,9 @@ public class PlayerStats : MonoBehaviour
 
     private void Update()
     {
-        Stamina.Regenerate(Time.deltaTime);
-        Health.Regenerate(Time.deltaTime);
+        float deltaTime = Time.deltaTime;
+
+        Stamina.Regenerate(deltaTime);
+        Health.Regenerate(deltaTime);
     }
 }
