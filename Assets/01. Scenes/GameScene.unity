@@ -665,7 +665,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fpsViewTarget: {fileID: 2023116518}
   _tpsViewTarget: {fileID: 192126634}
-  _smoothTime: 0.1
+  _viewSwitchDuration: 0.5
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1105,6 +1105,7 @@ MonoBehaviour:
   _bombPrefab: {fileID: 765134004314411503, guid: 0e74629c84271dd429f17ab9c3ee21bf, type: 3}
   _bombMaxcount: 5
   _bombCount: 0
+  _bombParent: {fileID: 0}
   _throwPower: 15
 --- !u!1 &879918436
 GameObject:

@@ -10,6 +10,7 @@ public class PlayerFire : MonoBehaviour
     [SerializeField] private Bomb _bombPrefab;
     [SerializeField] private int _bombMaxcount = 5;
     [SerializeField] private int _bombCount;
+    [SerializeField] private Transform _bombParent;
 
     [SerializeField] private float _throwPower = 15f;
     private Transform _cameraTransform;
@@ -58,7 +59,7 @@ public class PlayerFire : MonoBehaviour
 
     private Bomb CreateBomb()
     {
-        Bomb bomb = Instantiate(_bombPrefab).GetComponent<Bomb>();
+        Bomb bomb = Instantiate(_bombPrefab, _bombParent);
         bomb.SetManagedPool(_bombPool);
         return bomb;
     }
