@@ -8,9 +8,12 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _walkSpeed = 1f;
     [SerializeField] private float _runSpeed = 5f;
-    [SerializeField] private float _jumpForce = 5f;
 
-    [Header("스테미나")]
+    [Header("점프")]
+    [SerializeField] private float _jumpForce = 5f;
+    [SerializeField] private float _jumpStaminaCost = 25f;
+
+    [Header("스태미나")]
     [SerializeField] private float _stamina;
     [SerializeField] private float _maxStamina = 100f;
     [SerializeField] private float _staminaIncreaseRate = 10f;
@@ -47,6 +50,11 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonDown("Jump") && _characterController.isGrounded)
         {
             _yVelocity = _jumpForce;
+        }
+        else if(Input.GetButtonDown("Jump") && !_characterController.isGrounded && _stamina >= _jumpStaminaCost)
+        {
+            _yVelocity = _jumpForce;
+            _stamina -= _jumpStaminaCost;
         }
 
         Vector3 direction = new Vector3(moveX, 0, moveZ);
