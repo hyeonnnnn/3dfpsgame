@@ -1,10 +1,21 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 1f;
+    [Header("이동 속도")]
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _walkSpeed = 1f;
+    [SerializeField] private float _runSpeed = 5f;
     [SerializeField] private float _jumpForce = 5f;
+
+    [Header("스테미나")]
+    [SerializeField] private float _stamina;
+    [SerializeField] private float _maxStamina = 100f;
+    [SerializeField] private float _staminaIncreaseRate = 10f;
+    [SerializeField] private float _staminaDecreaseRate = 20f;
+    [SerializeField] private Slider _playerStaminaUI;
     private const float Gravity = -9.81f;
 
     private CharacterController _characterController;
@@ -15,9 +26,15 @@ public class PlayerMove : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
     }
 
+    private void Start()
+    {
+        _moveSpeed = _walkSpeed;
+    }
+
     private void Update()
     {
         Move();
+        SpeedUp();
     }
 
     private void Move()
@@ -39,5 +56,21 @@ public class PlayerMove : MonoBehaviour
         direction.y = _yVelocity;
 
         _characterController.Move(direction * _moveSpeed * Time.deltaTime);
+    }
+
+    private void SpeedUp()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && _stamina > 0)
+        {
+            _moveSpeed = _runSpeed;
+            _stamina -= _staminaDecreaseRate * Time.deltaTime;
+        }
+        else
+        {
+            _moveSpeed = _walkSpeed;
+            _stamina += _staminaIncreaseRate * Time.deltaTime;
+        }
+        _playerStaminaUI.value = _stamina / _maxStamina;
+        _stamina = Mathf.Clamp(_stamina, 0f, _maxStamina);
     }
 }
