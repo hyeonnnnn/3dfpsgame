@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class PlayerFire : MonoBehaviour
 {
@@ -15,9 +16,13 @@ public class PlayerFire : MonoBehaviour
 
     public event Action<int> OnBombCountChanged;
 
+    private IObjectPool<Bomb> _bombPool;
+    private int _maxCount = 15;
+
     private void Awake()
     {
         _cameraTransform = Camera.main.transform;
+        _bombPool = new ObjectPool<Bomb>(CreateBomb, OnGetBomb, OnReleaseBomb, OnDestroyBomb, maxSize: _maxCount);
     }
 
     private void Start()
@@ -43,9 +48,33 @@ public class PlayerFire : MonoBehaviour
 
     private void Fire()
     {
-        Bomb bomb = Instantiate(_bombPrefab, _fireTransform.position, Quaternion.identity);
-        Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
+        var bomb = _bombPool.Get();
+        bomb.transform.position = _fireTransform.position;
 
+        Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
+        rigidbody.linearVelocity = Vector3.zero;
         rigidbody.AddForce(_cameraTransform.forward * _throwPower, ForceMode.VelocityChange);
+    }
+
+    private Bomb CreateBomb()
+    {
+        Bomb bomb = Instantiate(_bombPrefab).GetComponent<Bomb>();
+        bomb.SetManagedPool(_bombPool);
+        return bomb;
+    }
+
+    private void OnGetBomb(Bomb bomb)
+    {
+        bomb.gameObject.SetActive(true);
+    }
+
+    private void OnReleaseBomb(Bomb bomb)
+    {
+        bomb.gameObject.SetActive(false);
+    }
+
+    private void OnDestroyBomb(Bomb bomb)
+    {
+        Destroy(bomb.gameObject);
     }
 }
