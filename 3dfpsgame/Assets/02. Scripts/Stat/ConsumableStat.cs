@@ -53,17 +53,6 @@ public class ConsumableStat
             _value = _maxValue;
         }
     }
-
-    public void DecreaseMax(float amount)
-    {
-        _maxValue -= amount;
-    }
-
-    public void Decrease(float amount)
-    {
-        _value -= amount;
-    }
-
     public void SetMaxValue(float amount)
     {
         _maxValue = amount;

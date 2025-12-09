@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
@@ -17,12 +16,14 @@ public class PlayerMove : MonoBehaviour
     private MoveConfig _moveConfig;
     private CharacterController _characterController;
     private PlayerStats _stats;
+    private Transform _cameraTransform;
 
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
         _stats = GetComponent<PlayerStats>();
         _moveConfig = new MoveConfig();
+        _cameraTransform = Camera.main.transform;
     }
 
     private void Start()
@@ -46,7 +47,7 @@ public class PlayerMove : MonoBehaviour
         Vector3 direction = new Vector3(moveX, 0, moveZ);
         direction.Normalize();
 
-        direction = Camera.main.transform.TransformDirection(direction);
+        direction = _cameraTransform.transform.TransformDirection(direction);
         direction.y = _moveConfig.YVelocity;
 
         _characterController.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
@@ -58,6 +59,7 @@ public class PlayerMove : MonoBehaviour
         if (_characterController.isGrounded)
         {
             _moveConfig.JumpCount = 0;
+            if (_moveConfig.YVelocity < 0) _moveConfig.YVelocity = -1f;
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && _moveConfig.JumpCount < _moveConfig.MaxJumpCount)
@@ -77,7 +79,6 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift) && _stats.Stamina.TryConsume(_moveConfig.RunStaminaValue * Time.deltaTime))
         {
             _stats.MoveSpeed.SetValue(_stats.RunSpeed.Value);
-            _stats.Stamina.Consume(_moveConfig.RunStaminaValue);
         }
         else
         {
