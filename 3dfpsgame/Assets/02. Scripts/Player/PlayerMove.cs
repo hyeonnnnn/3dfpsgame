@@ -4,81 +4,84 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
-    [Header("이동 속도")]
-    [SerializeField] private float _moveSpeed;
-    [SerializeField] private float _walkSpeed = 1f;
-    [SerializeField] private float _runSpeed = 5f;
-
-    [Header("점프")]
-    [SerializeField] private float _jumpForce = 5f;
-    [SerializeField] private float _jumpStaminaCost = 25f;
-
-    [Header("스태미나")]
-    [SerializeField] private float _stamina;
-    [SerializeField] private float _maxStamina = 100f;
-    [SerializeField] private float _staminaIncreaseRate = 10f;
-    [SerializeField] private float _staminaDecreaseRate = 20f;
-    [SerializeField] private Slider _playerStaminaUI;
-    private const float Gravity = -9.81f;
-
+    [SerializeField]
+    public class MoveConfig
+    {
+        public float Gravity = -9.81f;
+        public float YVelocity = 0f;
+        public float RunStaminaValue = 1f;
+        public float JumpStaminaValue = 10f;
+        public int MaxJumpCount = 2;
+        public int JumpCount = 0;
+    }
+    private MoveConfig _moveConfig;
     private CharacterController _characterController;
-    private float _yVelocity = 0f;
+    private PlayerStats _stats;
 
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
+        _stats = GetComponent<PlayerStats>();
+        _moveConfig = new MoveConfig();
     }
 
     private void Start()
     {
-        _moveSpeed = _walkSpeed;
+        _stats.MoveSpeed.SetValue(_stats.WalkSpeed.Value);
     }
 
     private void Update()
     {
         Move();
-        SpeedUp();
+        Run();
     }
 
     private void Move()
     {
-        _yVelocity += Gravity * Time.deltaTime;
+        _moveConfig.YVelocity += _moveConfig.Gravity * Time.deltaTime;
 
-        float moveX = Input.GetAxis("Horizontal") * _moveSpeed * Time.deltaTime;
-        float moveZ = Input.GetAxis("Vertical") * _moveSpeed * Time.deltaTime;
-
-        if (Input.GetButtonDown("Jump") && _characterController.isGrounded)
-        {
-            _yVelocity = _jumpForce;
-        }
-        else if(Input.GetButtonDown("Jump") && !_characterController.isGrounded && _stamina >= _jumpStaminaCost)
-        {
-            _yVelocity = _jumpForce;
-            _stamina -= _jumpStaminaCost;
-        }
+        float moveX = Input.GetAxis("Horizontal");
+        float moveZ = Input.GetAxis("Vertical");
 
         Vector3 direction = new Vector3(moveX, 0, moveZ);
         direction.Normalize();
 
         direction = Camera.main.transform.TransformDirection(direction);
-        direction.y = _yVelocity;
+        direction.y = _moveConfig.YVelocity;
 
-        _characterController.Move(direction * _moveSpeed * Time.deltaTime);
+        _characterController.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
+        TryJump();
     }
 
-    private void SpeedUp()
+    private void TryJump()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && _stamina > 0)
+        if (_characterController.isGrounded)
         {
-            _moveSpeed = _runSpeed;
-            _stamina -= _staminaDecreaseRate * Time.deltaTime;
+            _moveConfig.JumpCount = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && _moveConfig.JumpCount < _moveConfig.MaxJumpCount)
+        {
+            _moveConfig.YVelocity = _stats.JumpForce.Value;
+            _moveConfig.JumpCount++;
+
+            if (_moveConfig.JumpCount > 1)
+            {
+                _stats.Stamina.TryConsume(_moveConfig.JumpStaminaValue);
+            }
+        }
+    }
+
+    private void Run()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && _stats.Stamina.TryConsume(_moveConfig.RunStaminaValue * Time.deltaTime))
+        {
+            _stats.MoveSpeed.SetValue(_stats.RunSpeed.Value);
+            _stats.Stamina.Consume(_moveConfig.RunStaminaValue);
         }
         else
         {
-            _moveSpeed = _walkSpeed;
-            _stamina += _staminaIncreaseRate * Time.deltaTime;
+            _stats.MoveSpeed.SetValue(_stats.WalkSpeed.Value);
         }
-        _playerStaminaUI.value = _stamina / _maxStamina;
-        _stamina = Mathf.Clamp(_stamina, 0f, _maxStamina);
     }
 }
