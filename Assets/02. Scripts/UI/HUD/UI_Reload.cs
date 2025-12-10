@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class UI_Reload : MonoBehaviour
 {
-    [SerializeField] private PlayerGunFire _playerGunFire;
+    [SerializeField] private AmmoController _ammoController;
     private Image _reloadImageUI;
 
     private float _reloadCoolTime;
@@ -34,11 +34,11 @@ public class UI_Reload : MonoBehaviour
 
     private void OnEnable()
     {
-        _playerGunFire.OnReloaded += HandleReloaded;
+        _ammoController.OnReloaded += HandleReloaded;
     }
     private void OnDisable()
     {
-        _playerGunFire.OnReloaded -= HandleReloaded;
+        _ammoController.OnReloaded -= HandleReloaded;
     }
 
     private void HandleReloaded(float reloadTime)

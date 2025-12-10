@@ -219,7 +219,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 560014183069458990, guid: f49c2828a44000644bc9e524ee35033d, type: 3}
       propertyPath: m_Name
-      value: Explosion 3
+      value: BulletEffect
       objectReference: {fileID: 0}
     - target: {fileID: 560014183069459152, guid: f49c2828a44000644bc9e524ee35033d, type: 3}
       propertyPath: playOnAwake
@@ -541,8 +541,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bombCount: {fileID: 1473798548}
   _playerBombFire: {fileID: 871459799}
-  _bulletCount: {fileID: 1733063219}
-  _playerGunFire: {fileID: 871459800}
+  _magazineCount: {fileID: 0}
+  _ammoController: {fileID: 871459801}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -977,6 +977,7 @@ GameObject:
   - component: {fileID: 871459798}
   - component: {fileID: 871459800}
   - component: {fileID: 871459799}
+  - component: {fileID: 871459801}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -1171,11 +1172,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fireTransform: {fileID: 164743915}
   _hitEffect: {fileID: 714879261}
+  _fireCoolTime: 0.3
+--- !u!114 &871459801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871459790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4e4081d8bef1704b9bcdb92e613a4df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _currentMagazine: 0
   _maxMagazine: 30
   _remainingAmmo: 120
   _reloadCoolTime: 1.6
-  _fireCoolTime: 0.3
 --- !u!1 &879918436
 GameObject:
   m_ObjectHideFlags: 0
@@ -2306,7 +2319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baaa9fe331f47d34ba35568d7ae4baae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerGunFire: {fileID: 871459800}
+  _ammoController: {fileID: 871459801}
 --- !u!1 &1733063216
 GameObject:
   m_ObjectHideFlags: 0
