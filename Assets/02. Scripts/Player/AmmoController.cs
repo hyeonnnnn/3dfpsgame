@@ -8,8 +8,11 @@ public class AmmoController : MonoBehaviour
     [SerializeField] private int _maxMagazine = 30;
     [SerializeField] private int _remainingAmmo = 120;
     [SerializeField] private float _reloadCoolTime = 1.6f;
+    private bool _isReloading = false;
 
     public int CurrentMagazine => _currentMagazine;
+    public bool IsReloading => _isReloading;
+
 
     public event Action<float> OnReloaded;
     public event Action<int, int> OnAmmoCountChanged;
@@ -45,12 +48,15 @@ public class AmmoController : MonoBehaviour
     {
         float timer = 0f;
         OnReloaded?.Invoke(_reloadCoolTime);
+
+        _isReloading = true;
         while (timer < _reloadCoolTime)
         {
             timer += Time.deltaTime;
             yield return null;
         }
         Reload(neededBullets);
+        _isReloading = false;
     }
 
     private void Reload(int neededBullets)
@@ -61,14 +67,15 @@ public class AmmoController : MonoBehaviour
         OnAmmoCountChanged?.Invoke(_currentMagazine, _remainingAmmo);
     }
 
-    public void ConsumeMagazine()
+    public bool ConsumeMagazine()
     {
         if (_currentMagazine <= 0)
         {
             TryReload();
-            return;
+            return false;
         }
         _currentMagazine--;
         OnAmmoCountChanged?.Invoke(_currentMagazine, _remainingAmmo);
+        return true;
     }
 }

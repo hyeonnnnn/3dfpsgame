@@ -18,17 +18,16 @@ public class UI_Reload : MonoBehaviour
 
     private void Update()
     {
-        if (_isReloading)
+        if (_isReloading == false) return;
+
+        _fillAmount += Time.deltaTime / _reloadCoolTime;
+        _reloadImageUI.fillAmount = _fillAmount;
+
+        if (_fillAmount >= 1f)
         {
-            _fillAmount += Time.deltaTime / _reloadCoolTime;
-            _reloadImageUI.fillAmount = _fillAmount;
-            
-            if (_fillAmount >= 1f)
-            {
-                _isReloading = false;
-                _fillAmount = 0f;
-                _reloadImageUI.fillAmount = 0f;
-            }
+            _isReloading = false;
+            _fillAmount = 0f;
+            _reloadImageUI.fillAmount = 0f;
         }
     }
 

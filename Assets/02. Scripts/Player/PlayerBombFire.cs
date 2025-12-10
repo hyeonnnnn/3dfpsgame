@@ -12,6 +12,10 @@ public class PlayerBombFire : MonoBehaviour
     [SerializeField] private int _bombCount;
     [SerializeField] private Transform _bombParent;
 
+    [SerializeField] private CameraShake _cameraShake;
+    [SerializeField] private float _shakeDuration = 0.5f;
+    [SerializeField] private float _shakeMagnitude = 1.2f;
+
     [SerializeField] private float _throwPower = 15f;
     private Transform _cameraTransform;
 
@@ -55,6 +59,8 @@ public class PlayerBombFire : MonoBehaviour
         Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
         rigidbody.linearVelocity = Vector3.zero;
         rigidbody.AddForce(_cameraTransform.forward * _throwPower, ForceMode.VelocityChange);
+
+        _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
     }
 
     private Bomb CreateBomb()

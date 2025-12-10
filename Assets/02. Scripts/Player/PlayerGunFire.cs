@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using UnityEngine;
 
 public class PlayerGunFire : MonoBehaviour
@@ -13,6 +11,9 @@ public class PlayerGunFire : MonoBehaviour
 
     private AmmoController _ammoController;
 
+    [SerializeField] private CameraShake _cameraShake;
+    [SerializeField] private float _shakeDuration = 0.3f;
+    [SerializeField] private float _shakeMagnitude = 0.5f;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class PlayerGunFire : MonoBehaviour
     private void TryFire()
     {
         if (_fireTimer < _fireCoolTime) return;
+        if (_ammoController.IsReloading) return;
 
         Ray ray = new Ray(_fireTransform.position, _mainCamera.transform.forward);
         RaycastHit hitInfo = new RaycastHit();
@@ -59,7 +61,6 @@ public class PlayerGunFire : MonoBehaviour
         }
 
         _ammoController.ConsumeMagazine();
+        _cameraShake.Shake(_shakeDuration, _shakeMagnitude);
     }
-
-
 }
