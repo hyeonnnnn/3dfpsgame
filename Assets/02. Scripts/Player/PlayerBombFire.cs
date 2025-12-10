@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class PlayerFire : MonoBehaviour
+public class PlayerBombFire : MonoBehaviour
 {
     [SerializeField] private Transform _fireTransform;
 

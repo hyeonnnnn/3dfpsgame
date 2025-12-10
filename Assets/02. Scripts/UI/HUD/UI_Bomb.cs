@@ -4,7 +4,7 @@ using UnityEngine;
 public class UI_Bomb : MonoBehaviour
 {
     [SerializeField] private TMP_Text _bombCount;
-    [SerializeField] private PlayerFire _playerFire;
+    [SerializeField] private PlayerBombFire _playerFire;
 
     private void OnEnable()
     {
