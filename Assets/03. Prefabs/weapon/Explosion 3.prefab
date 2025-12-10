@@ -8,6 +8,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 302563520763101281, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522982781472501600, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: cullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522982781472501600, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522982781472501600, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: autoRandomSeed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7522982781472501600, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
       propertyPath: UVModule.tilesX
       value: 10
@@ -30,15 +46,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7522982781472501601, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.2054925
+      value: -0.56508917
       objectReference: {fileID: 0}
     - target: {fileID: 7522982781472501601, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.7117644e-17
+      value: -2.096654e-17
       objectReference: {fileID: 0}
     - target: {fileID: 7522982781472501601, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.1063504
+      value: 4.7212453
       objectReference: {fileID: 0}
     - target: {fileID: 7522982781472501601, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -73,9 +89,25 @@ PrefabInstance:
       value: Explosion 3
       objectReference: {fileID: 0}
     - target: {fileID: 7522982781472501663, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    - target: {fileID: 7522982781472501663, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522982781472501663, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 5fd7eb1efb65a9b4aa5224eaa309f1f4, type: 2}
+    - target: {fileID: 7522982782318301002, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522982782318301003, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7522982782318301003, guid: 017c9fcd02ca72049806a4014da0bea6, type: 3}
       propertyPath: moveWithTransform
       value: 1

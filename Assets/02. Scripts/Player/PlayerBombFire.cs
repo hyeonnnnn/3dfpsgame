@@ -15,7 +15,7 @@ public class PlayerBombFire : MonoBehaviour
     [SerializeField] private float _throwPower = 15f;
     private Transform _cameraTransform;
 
-    public event Action<int> OnBombCountChanged;
+    public event Action<int, int> OnBombCountChanged;
 
     private IObjectPool<Bomb> _bombPool;
     private int _maxCount = 15;
@@ -43,7 +43,7 @@ public class PlayerBombFire : MonoBehaviour
             if (_bombCount <= 0) return;
             Fire();
             _bombCount--;
-            OnBombCountChanged?.Invoke(_bombCount);
+            OnBombCountChanged?.Invoke(_bombCount, _bombMaxcount);
         }
     }
 

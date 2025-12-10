@@ -1,29 +1,62 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerGunFire : MonoBehaviour
 {
     [SerializeField] private Transform _fireTransform;
-    [SerializeField] private ParticleSystem _hitEffectPrefab;
+    [SerializeField] private ParticleSystem _hitEffect;
+    
+    [SerializeField] private int _currentMagazine;
+    [SerializeField] private int _maxMagazine = 30;
+    [SerializeField] private int _remainingAmmo = 120;
+    [SerializeField] private float _reloadCoolTime = 1.6f;
+
+    [SerializeField] private float _fireCoolTime = 0.3f;
+    private float _fireTimer = 0f;
     private Camera _mainCamera;
+
+    public event Action<int, int> OnBulletCountChanged;
+    public event Action<float> OnReloaded;
 
     private void Start()
     {
         _mainCamera = Camera.main;
+        _currentMagazine = _maxMagazine;
     }
 
     private void Update()
     {
-        TryFire();
+        _fireTimer += Time.deltaTime;
+
+        // 발사
+        if (Input.GetMouseButton(0))
+        {
+            TryFire();
+        }
+
+        // 재장전
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            TryReloadBullet();
+        }
     }
 
     private void TryFire()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (_fireTimer < _fireCoolTime) return;
+
+        if (_currentMagazine <= 0)
         {
-            Ray ray = new Ray(_fireTransform.position, _mainCamera.transform.forward);
-            RaycastHit hitInfo = new RaycastHit(); // 충돌한 대상의 정보를 저장
-            Fire(ray, hitInfo);
+            TryReloadBullet();
+            return;
         }
+
+        Ray ray = new Ray(_fireTransform.position, _mainCamera.transform.forward);
+        RaycastHit hitInfo = new RaycastHit();
+        Fire(ray, hitInfo);
+
+        _fireTimer = 0f;
     }
 
     private void Fire(Ray ray, RaycastHit hitInfo)
@@ -33,13 +66,46 @@ public class PlayerGunFire : MonoBehaviour
         if (isHit)
         {
             Debug.Log($"Hit : {hitInfo.transform.name}");
-            ParticleSystem hitEffect = Instantiate(_hitEffectPrefab, hitInfo.point, Quaternion.identity);
-            hitEffect.transform.forward = hitInfo.normal;
-            hitEffect.Play();
+            _hitEffect.transform.position = hitInfo.point;
+            _hitEffect.transform.forward = hitInfo.normal;
+            _hitEffect.Play();
         }
+
+        _currentMagazine--;
+        OnBulletCountChanged?.Invoke(_currentMagazine, _remainingAmmo);
     }
 
-    // Ray: 레이저 (시작 위치, 방향, 거리)
-    // hitInfo: 충돌한 대상의 정보 저장
-    // RaycastHit: 충돌한 대상의 정보 저장
+    private void TryReloadBullet()
+    {
+        int neededBullets = _maxMagazine - _currentMagazine;
+        if (neededBullets <= 0) return;
+        if (_remainingAmmo <= 0) return;
+
+        if (neededBullets > _remainingAmmo)
+        {
+            neededBullets = _remainingAmmo;
+        }
+
+        StartCoroutine(ReloadCoroutine(neededBullets));
+    }
+
+    private IEnumerator ReloadCoroutine(int neededBullets)
+    {
+        float timer = 0f;
+        OnReloaded?.Invoke(_reloadCoolTime);
+        while (timer < _reloadCoolTime)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        ReloadBullet(neededBullets);
+    }
+
+    private void ReloadBullet(int neededBullets)
+    {
+        _remainingAmmo -= neededBullets;
+        _currentMagazine += neededBullets;
+
+        OnBulletCountChanged?.Invoke(_currentMagazine, _remainingAmmo);
+    }
 }
