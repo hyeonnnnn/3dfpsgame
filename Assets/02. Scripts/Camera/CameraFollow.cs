@@ -20,6 +20,9 @@ public class CameraFollow : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (_fpsViewTarget == null) return;
+        if (_tpsViewTarget == null) return;
+
         TrySwitchView();
 
         if (!_isTransitioning)

@@ -9,10 +9,12 @@ public class Monster : MonoBehaviour
     [SerializeField] private float _detectRange = 4f;
     [SerializeField] private float _attackRange = 1.2f;
     [SerializeField] private float _moveSpeed = 5f;
-    [SerializeField] private float _attackSpeed = 2;
+    [SerializeField] private float _attackInterval = 2;
+    [SerializeField] private float _attackDamage = 10f;
     private float _attackTimer = 0f;
 
     private GameObject _player;
+    private PlayerController _playerController;
     private CharacterController _controller;
 
     private Vector3 _originPosition;
@@ -25,12 +27,15 @@ public class Monster : MonoBehaviour
     private void Start()
     {
         _player = GameObject.FindGameObjectWithTag("Player");
+        _playerController = _player.GetComponent<PlayerController>();
         _originPosition = transform.position;
     }
 
     private void Update()
     {
-        switch(State)
+        if (_player == null) return;
+
+        switch (State)
         {
             case EMonsterState.Idle:
                 Idle();
@@ -56,7 +61,6 @@ public class Monster : MonoBehaviour
         if (Vector3.Distance(transform.position, _player.transform.position) <= _detectRange)
         {
             State = EMonsterState.Trace;
-            Debug.Log("Idle -> Trace");
         }
     }
 
@@ -71,13 +75,11 @@ public class Monster : MonoBehaviour
         if (distance > _detectRange)
         {
             State = EMonsterState.Idle;
-            Debug.Log("Trace -> Idle");
         }
 
         if (distance <= _attackRange)
         {
             State = EMonsterState.Attack;
-            Debug.Log("Trace -> Attack");
         }
     }
 
@@ -96,11 +98,11 @@ public class Monster : MonoBehaviour
         }
 
         _attackTimer += Time.deltaTime;
-        if (_attackTimer >= _attackSpeed)
+        if (_attackTimer >= _attackInterval)
         {
             _attackTimer = 0f;
-            Debug.Log("Attack!");
-            // 과제. 플레이어 공격 처리
+            _playerController.TakeDamage(_attackDamage);
+            Debug.Log("Monster Attack!");
         }
     }
 
@@ -121,6 +123,11 @@ public class Monster : MonoBehaviour
             StartCoroutine(Death_Coroutine());
         }
         return true;
+    }
+
+    private void Hit()
+    {
+
     }
 
     private IEnumerator Hit_Coroutine()

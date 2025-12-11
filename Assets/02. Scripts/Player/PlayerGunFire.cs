@@ -17,6 +17,8 @@ public class PlayerGunFire : MonoBehaviour
 
     [SerializeField] private UI_Crosshair _crosshair;
 
+    private PlayerStats _playerStats;
+
     private void Awake()
     {
         _ammoController = GetComponent<AmmoController>();
@@ -61,6 +63,12 @@ public class PlayerGunFire : MonoBehaviour
             _hitEffect.transform.position = hitInfo.point;
             _hitEffect.transform.forward = hitInfo.normal;
             _hitEffect.Play();
+
+            Monster monster = hitInfo.transform.GetComponent<Monster>();
+            if (monster != null)
+            {
+                monster.TryTakeDamage(_playerStats.Damage.Value);
+            }
         }
 
         _ammoController.ConsumeMagazine();
