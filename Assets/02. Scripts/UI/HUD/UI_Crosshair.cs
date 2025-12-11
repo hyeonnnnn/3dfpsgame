@@ -1,4 +1,4 @@
-using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class UI_Crosshair : MonoBehaviour
@@ -6,9 +6,10 @@ public class UI_Crosshair : MonoBehaviour
     [SerializeField] private float _expandScale = 1.5f;
     [SerializeField] private float _expandDuration = 0.1f;
     [SerializeField] private float _shrinkDuration = 0.15f;
+    [SerializeField] private Ease _expandEase = Ease.OutQuad;
+    [SerializeField] private Ease _shrinkEase = Ease.OutQuad;
 
     private Vector3 _originalScale;
-    private Coroutine _currentCoroutine;
 
     private void Awake()
     {
@@ -17,37 +18,16 @@ public class UI_Crosshair : MonoBehaviour
 
     public void Expand()
     {
-        if (_currentCoroutine != null)
-        {
-            StopCoroutine(_currentCoroutine);
-        }
-        _currentCoroutine = StartCoroutine(ExpandCoroutine());
-    }
+        transform.DOKill();
 
-    private IEnumerator ExpandCoroutine()
-    {
         Vector3 targetScale = _originalScale * _expandScale;
 
-        float elapsed = 0f;
-        Vector3 startScale = transform.localScale;
-
-        while (elapsed < _expandDuration)
-        {
-            elapsed += Time.deltaTime;
-            transform.localScale = Vector3.Lerp(startScale, targetScale, elapsed / _expandDuration);
-            yield return null;
-        }
-        transform.localScale = targetScale;
-
-        elapsed = 0f;
-        while (elapsed < _shrinkDuration)
-        {
-            elapsed += Time.deltaTime;
-            transform.localScale = Vector3.Lerp(targetScale, _originalScale, elapsed / _shrinkDuration);
-            yield return null;
-        }
-        transform.localScale = _originalScale;
-
-        _currentCoroutine = null;
+        transform.DOScale(targetScale, _expandDuration)
+            .SetEase(_expandEase)
+            .OnComplete(() =>
+            {
+                transform.DOScale(_originalScale, _shrinkDuration)
+                    .SetEase(_shrinkEase);
+            });
     }
 }
