@@ -66,10 +66,11 @@ public class PlayerGunFire : MonoBehaviour
             _hitEffect.Play();
 
             Monster monster = hitInfo.transform.GetComponent<Monster>();
-            Vector3 direction = (hitInfo.transform.position - _fireTransform.position).normalized;
             if (monster != null)
             {
-                monster.TryTakeDamage(_playerStats.Damage.Value, direction, _nockbackForce);
+                Vector3 direction = (hitInfo.transform.position - _fireTransform.position).normalized;
+                Damage damage = new Damage(_playerStats.Damage.Value, direction, _nockbackForce);
+                monster.TryTakeDamage(damage);
             }
         }
 
