@@ -11,6 +11,7 @@ public class AmmoController : MonoBehaviour
     private bool _isReloading = false;
 
     public int CurrentMagazine => _currentMagazine;
+    public int RemainingAmmo => _remainingAmmo;
     public bool IsReloading => _isReloading;
 
 

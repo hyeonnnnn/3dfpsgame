@@ -42,6 +42,7 @@ public class PlayerGunFire : MonoBehaviour
     {
         if (_fireTimer < _fireCoolTime) return;
         if (_ammoController.IsReloading) return;
+        if (_ammoController.RemainingAmmo <= 0 && _ammoController.CurrentMagazine <= 0) return;
 
         Ray ray = new Ray(_fireTransform.position, _mainCamera.transform.forward);
         RaycastHit hitInfo = new RaycastHit();
