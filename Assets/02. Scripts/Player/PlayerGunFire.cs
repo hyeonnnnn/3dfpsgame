@@ -18,16 +18,17 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField] private UI_Crosshair _crosshair;
 
     private PlayerStats _playerStats;
+    [SerializeField] private float _nockbackForce = 4f;
 
     private void Awake()
     {
         _ammoController = GetComponent<AmmoController>();
+        _playerStats = GetComponent<PlayerStats>();
     }
 
     private void Start()
     {
         _mainCamera = Camera.main;
-        
     }
 
     private void Update()
@@ -65,9 +66,10 @@ public class PlayerGunFire : MonoBehaviour
             _hitEffect.Play();
 
             Monster monster = hitInfo.transform.GetComponent<Monster>();
+            Vector3 direction = (hitInfo.transform.position - _fireTransform.position).normalized;
             if (monster != null)
             {
-                monster.TryTakeDamage(_playerStats.Damage.Value);
+                monster.TryTakeDamage(_playerStats.Damage.Value, direction, _nockbackForce);
             }
         }
 

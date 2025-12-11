@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
+using UnityEngine.UIElements;
 
 public class Monster : MonoBehaviour
 {
@@ -19,9 +21,14 @@ public class Monster : MonoBehaviour
 
     private Vector3 _originPosition;
 
+    private Renderer _renderer;
+    private Color _hitColor = Color.red;
+    private Color _originalColor;
+
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
+        _renderer = GetComponent<Renderer>();
     }
 
     private void Start()
@@ -29,6 +36,7 @@ public class Monster : MonoBehaviour
         _player = GameObject.FindGameObjectWithTag("Player");
         _playerController = _player.GetComponent<PlayerController>();
         _originPosition = transform.position;
+        _originalColor = _renderer.material.color;
     }
 
     private void Update()
@@ -37,21 +45,10 @@ public class Monster : MonoBehaviour
 
         switch (State)
         {
-            case EMonsterState.Idle:
-                Idle();
-                break;
-
-            case EMonsterState.Trace:
-                Trace();
-                break;
-
-            case EMonsterState.Comeback:
-                Comeback();
-                break;
-
-            case EMonsterState.Attack:
-                Attack();
-                break;
+            case EMonsterState.Idle: Idle(); break;
+            case EMonsterState.Trace: Trace(); break;
+            case EMonsterState.Comeback: Comeback(); break;
+            case EMonsterState.Attack: Attack(); break;
         }
     }
 
@@ -106,7 +103,7 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public bool TryTakeDamage(float damage)
+    public bool TryTakeDamage(float damage, Vector3 direction, float nockbackForce)
     {
         if (State == EMonsterState.Death) return false;
 
@@ -115,7 +112,7 @@ public class Monster : MonoBehaviour
         if (_health > 0f)
         {
             State = EMonsterState.Hit;
-            StartCoroutine(Hit_Coroutine());
+            StartCoroutine(Hit_Coroutine(direction, nockbackForce));
         }
         else
         {
@@ -125,14 +122,24 @@ public class Monster : MonoBehaviour
         return true;
     }
 
-    private void Hit()
+    private IEnumerator Hit_Coroutine(Vector3 direction, float knockbackForce)
     {
+        float elapsed = 0f;
+        float duration = 0.2f;
+        Vector3 knockbackVelocity = direction * knockbackForce;
 
-    }
+        _renderer.material.color = _hitColor;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = elapsed / duration;
+            Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
+            _controller.Move(velocity * Time.deltaTime);
+            yield return null;
+        }
+        _renderer.material.color = _originalColor;
 
-    private IEnumerator Hit_Coroutine()
-    {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
         State = EMonsterState.Idle;
     }
 

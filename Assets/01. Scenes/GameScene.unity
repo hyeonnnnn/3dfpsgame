@@ -949,9 +949,9 @@ GameObject:
   - component: {fileID: 871459794}
   - component: {fileID: 871459793}
   - component: {fileID: 871459792}
+  - component: {fileID: 871459797}
   - component: {fileID: 871459795}
   - component: {fileID: 871459796}
-  - component: {fileID: 871459797}
   - component: {fileID: 871459798}
   - component: {fileID: 871459800}
   - component: {fileID: 871459799}
@@ -1160,6 +1160,7 @@ MonoBehaviour:
   _shakeDuration: 0.7
   _shakeMagnitude: 4.3
   _crosshair: {fileID: 1608002504}
+  _nockbackForce: 4
 --- !u!114 &871459801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1256,7 +1257,7 @@ Canvas:
   m_GameObject: {fileID: 879918436}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 330585545}
   m_PlaneDistance: 1
   m_PixelPerfect: 0
@@ -1585,7 +1586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   State: 0
-  _health: 100
+  _health: 5000
   _detectRange: 4
   _attackRange: 1.2
   _moveSpeed: 2
