@@ -12,7 +12,7 @@ public class PlayerGunFire : MonoBehaviour
     private AmmoController _ammoController;
 
     [SerializeField] private CameraShake _cameraShake;
-    [SerializeField] private float _shakeDuration = 0.3f;
+    [SerializeField] private float _shakeDuration = 0.6f;
     [SerializeField] private float _shakeMagnitude = 0.5f;
 
     private void Awake()
@@ -61,6 +61,6 @@ public class PlayerGunFire : MonoBehaviour
         }
 
         _ammoController.ConsumeMagazine();
-        _cameraShake.Shake(_shakeDuration, _shakeMagnitude);
+        _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
     }
 }

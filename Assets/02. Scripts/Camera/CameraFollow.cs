@@ -1,4 +1,4 @@
-using DG.Tweening;
+using System.Collections;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -10,10 +10,8 @@ public class CameraFollow : MonoBehaviour
 
     private bool _isTpsView = false;
     private bool _isTransitioning = false;
-    private float _transitionProgress = 0f;
 
     private Transform _currentViewTarget;
-    private Tween _switchTween;
 
     private void Start()
     {
@@ -23,7 +21,11 @@ public class CameraFollow : MonoBehaviour
     private void LateUpdate()
     {
         TrySwitchView();
-        FollowTarget();
+
+        if (!_isTransitioning)
+        {
+            transform.position = _currentViewTarget.position;
+        }
     }
 
     private void TrySwitchView()
@@ -33,34 +35,24 @@ public class CameraFollow : MonoBehaviour
             _isTpsView = !_isTpsView;
             _currentViewTarget = _isTpsView ? _tpsViewTarget : _fpsViewTarget;
 
-            if (_switchTween != null && _switchTween.IsActive()) _switchTween.Kill();
-
-            _isTransitioning = true;
-            _transitionProgress = 0f;
-
-            // 진행 관리용으로만 사용
-            _switchTween = DOTween.To(
-                () => _transitionProgress,
-                x => _transitionProgress = x,
-                1f,
-                _viewSwitchDuration
-            ).SetEase(Ease.OutSine)
-            .OnComplete(() => _isTransitioning = false);
+            StartCoroutine(SwitchViewCoroutine());
         }
     }
 
-    private void FollowTarget()
+    private IEnumerator SwitchViewCoroutine()
     {
-        if (_currentViewTarget == null) return;
+        _isTransitioning = true;
+        float progress = 0f;
 
-        if (_isTransitioning)
+        Vector3 startPosition = transform.position;
+
+        while (progress < 1f)
         {
-            // 실제 위치 보간
-            transform.position = Vector3.Lerp(transform.position, _currentViewTarget.position, _transitionProgress);
+            progress += Time.deltaTime / _viewSwitchDuration;
+            transform.position = Vector3.Lerp(startPosition, _currentViewTarget.position, progress);
+            yield return null;
         }
-        else
-        {
-            transform.position = _currentViewTarget.position;
-        }
+
+        _isTransitioning = false;
     }
 }

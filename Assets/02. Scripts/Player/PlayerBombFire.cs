@@ -13,7 +13,7 @@ public class PlayerBombFire : MonoBehaviour
     [SerializeField] private Transform _bombParent;
 
     [SerializeField] private CameraShake _cameraShake;
-    [SerializeField] private float _shakeDuration = 0.5f;
+    [SerializeField] private float _shakeDuration = 0.8f;
     [SerializeField] private float _shakeMagnitude = 1.2f;
 
     [SerializeField] private float _throwPower = 15f;
