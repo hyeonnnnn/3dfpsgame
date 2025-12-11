@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
@@ -15,6 +16,13 @@ public struct Damage
     }
 }
 
+public enum EMonsterMoveType
+{
+    MoveForward,
+    TurnLeft,
+    TurnRight,
+}
+
 [RequireComponent(typeof(Renderer))]
 public class Monster : MonoBehaviour
 {
@@ -28,7 +36,7 @@ public class Monster : MonoBehaviour
     // 공격
     [SerializeField] private float _detectRange = 4f;
     [SerializeField] private float _traceRange = 15f;
-    [SerializeField] private float _attackRange = 1.2f;
+    [SerializeField] private float _attackRange = 2f;
     [SerializeField] private float _attackInterval = 2;
     [SerializeField] private float _attackDamage = 10f;
 
@@ -42,6 +50,12 @@ public class Monster : MonoBehaviour
 
     private Vector3 _originPosition;
     private Coroutine _currentCoroutine;
+
+    private float _patrolInterval;
+    private float _patrolMaxInterval = 5f;
+    private float _patrolMinInterval = 2f;
+    private float _patrolTimer = 0f;
+    private float _turnDuration = 0.4f;
 
     // 히트 이펙트
     private Color _hitColor = Color.red;
@@ -77,6 +91,7 @@ public class Monster : MonoBehaviour
             case EMonsterState.Trace: Trace(); break;
             case EMonsterState.Comeback: Comeback(); break;
             case EMonsterState.Attack: Attack(); break;
+            case EMonsterState.Patrol: Patrol(); break;
         }
     }
 
@@ -88,6 +103,10 @@ public class Monster : MonoBehaviour
         if (Vector3.Distance(transform.position, _player.transform.position) <= _detectRange)
         {
             ChangeState(EMonsterState.Trace);
+        }
+        else
+        {
+            ChangeState(EMonsterState.Patrol);
         }
     }
 
@@ -157,6 +176,52 @@ public class Monster : MonoBehaviour
         }
     }
 
+    private EMonsterMoveType _currentMoveType = EMonsterMoveType.MoveForward;
+
+    private void Patrol()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
+        if (_player != null && distanceToPlayer <= _detectRange)
+        {
+            ChangeState(EMonsterState.Trace);
+            return;
+        }
+
+        DecidePatrolAction();
+        ExecutePatrolAction();
+    }
+
+    private void DecidePatrolAction()
+    {
+        _patrolTimer += Time.deltaTime;
+
+        if (_patrolTimer < _patrolInterval) return;
+
+        _patrolTimer = 0f;
+        _patrolInterval = Random.Range(_patrolMinInterval, _patrolMaxInterval);
+
+        int length = System.Enum.GetValues(typeof(EMonsterMoveType)).Length;
+        _currentMoveType = (EMonsterMoveType)Random.Range(0, length);
+    }
+
+    private void ExecutePatrolAction()
+    {
+        switch (_currentMoveType)
+        {
+            case EMonsterMoveType.MoveForward:
+                _controller.Move(transform.forward * _moveSpeed * Time.deltaTime);
+                break;
+            case EMonsterMoveType.TurnLeft:
+                transform.DORotate(new Vector3(0, transform.eulerAngles.y + 90f, 0), _turnDuration);
+                _currentMoveType = EMonsterMoveType.MoveForward;
+                break;
+            case EMonsterMoveType.TurnRight:
+                transform.DORotate(new Vector3(0, transform.eulerAngles.y - 90f, 0), _turnDuration);
+                _currentMoveType = EMonsterMoveType.MoveForward;
+                break;
+        }
+    }
+
     public bool TryTakeDamage(Damage damage)
     {
         if (State == EMonsterState.Death) return false;
@@ -217,6 +282,7 @@ public class Monster : MonoBehaviour
     {
         Vector3 direction = (targetPosition - transform.position).normalized;
         _controller.Move(direction * _moveSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.LookRotation(direction);
     }
 
     private void PerformAttack()
