@@ -39,6 +39,7 @@ public class Monster : MonoBehaviour
     [SerializeField] private float _attackRange = 2f;
     [SerializeField] private float _attackInterval = 2;
     [SerializeField] private float _attackDamage = 10f;
+    [SerializeField] private float _nockbackForce = 2f;
 
     private float _attackTimer = 0f;
 
@@ -99,6 +100,7 @@ public class Monster : MonoBehaviour
     {
         // Todo. Idle 애니메이션 재생
         if (_player == null) return;
+
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= _detectRange)
         {
@@ -169,10 +171,12 @@ public class Monster : MonoBehaviour
             return;
         }
 
+
         _attackTimer += Time.deltaTime;
         if (_attackTimer >= _attackInterval)
         {
-            PerformAttack();
+            Vector3 direction = (_player.transform.position - transform.position).normalized;
+            PerformAttack(direction);
         }
     }
 
@@ -255,7 +259,7 @@ public class Monster : MonoBehaviour
             elapsed += Time.deltaTime;
             float progress = elapsed / _knockbackDuration;
             Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
-            
+
             _controller.Move(velocity * Time.deltaTime);
             yield return null;
         }
@@ -285,12 +289,13 @@ public class Monster : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(direction);
     }
 
-    private void PerformAttack()
+    private void PerformAttack(Vector3 direction)
     {
         _attackTimer = 0f;
         if (_playerController != null)
         {
-            _playerController.TakeDamage(_attackDamage);
+            Damage damage = new Damage(_attackDamage, direction, _nockbackForce);
+            _playerController.TakeDamage(damage);
         }
         Debug.Log("Monster Attack!");
     }
