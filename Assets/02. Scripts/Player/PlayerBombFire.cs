@@ -19,6 +19,8 @@ public class PlayerBombFire : MonoBehaviour
     [SerializeField] private float _throwPower = 15f;
     private Transform _cameraTransform;
 
+    [SerializeField] private UI_Crosshair _crosshair;
+
     public event Action<int, int> OnBombCountChanged;
 
     private IObjectPool<Bomb> _bombPool;
@@ -61,6 +63,7 @@ public class PlayerBombFire : MonoBehaviour
         rigidbody.AddForce(_cameraTransform.forward * _throwPower, ForceMode.VelocityChange);
 
         _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
+        _crosshair.Expand();
     }
 
     private Bomb CreateBomb()

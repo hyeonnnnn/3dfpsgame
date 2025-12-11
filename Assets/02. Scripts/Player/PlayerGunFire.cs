@@ -15,6 +15,8 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField] private float _shakeDuration = 0.6f;
     [SerializeField] private float _shakeMagnitude = 0.5f;
 
+    [SerializeField] private UI_Crosshair _crosshair;
+
     private void Awake()
     {
         _ammoController = GetComponent<AmmoController>();
@@ -62,5 +64,6 @@ public class PlayerGunFire : MonoBehaviour
 
         _ammoController.ConsumeMagazine();
         _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
+        _crosshair.Expand();
     }
 }
