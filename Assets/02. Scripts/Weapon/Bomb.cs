@@ -19,7 +19,6 @@ public class Bomb : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         GameObject effectObject = Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
-        effectObject.transform.position = transform.position;
 
         if (!other.gameObject.CompareTag("Monster"))
         {

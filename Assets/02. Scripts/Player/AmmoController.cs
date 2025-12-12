@@ -79,4 +79,9 @@ public class AmmoController : MonoBehaviour
         OnAmmoCountChanged?.Invoke(_currentMagazine, _remainingAmmo);
         return true;
     }
+
+    public bool HasAmmunition()
+    {
+        return _currentMagazine > 0 || _remainingAmmo > 0;
+    }
 }

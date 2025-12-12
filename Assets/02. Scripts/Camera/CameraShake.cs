@@ -21,10 +21,10 @@ public class CameraShake : MonoBehaviour
             StopCoroutine(_currentShake);
             transform.localPosition = _originPosition;
         }
-        _currentShake = StartCoroutine(Recoil_coroutine(duration, magnitude));
+        _currentShake = StartCoroutine(Recoil_Coroutine(duration, magnitude));
     }
 
-    private IEnumerator Recoil_coroutine(float duration, float magnitude)
+    private IEnumerator Recoil_Coroutine(float duration, float magnitude)
     {
         Quaternion recoilRotation = _originRotation * Quaternion.Euler(-magnitude, 0f, 0f);
 

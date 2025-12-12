@@ -23,11 +23,11 @@ public class UI_Projectile : MonoBehaviour
 
     private void UpdateBombCount(int currentCount, int maxCount)
     {
-        _bombCount.text = $"Bombs: {currentCount.ToString()} / {maxCount.ToString()}";
+        _bombCount.text = $"Bombs: {currentCount} / {maxCount}";
     }
 
     private void UpdateMagazineCount(int currentCount, int remaingCount)
     {
-        _magazineCount.text = $"Bullets: {currentCount.ToString()} / {remaingCount.ToString()}";
+        _magazineCount.text = $"Bullets: {currentCount} / {remaingCount}";
     }
 }
