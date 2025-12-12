@@ -1,3 +1,4 @@
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -5,12 +6,26 @@ public class Bomb : MonoBehaviour
 {
     [SerializeField] private GameObject _explosionEffectPrefab;
 
+    [SerializeField] private float _konckbackForce = 8f;
+    [SerializeField] private float _damageMultiplier = 2f;
+    [SerializeField] private float _arrackDamage = 20f;
+
     private IObjectPool<Bomb> _managedPool;
 
     private void OnCollisionEnter(Collision other)
     {
+        Debug.Log(other.gameObject);
+
         GameObject effectObject = Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
         effectObject.transform.position = transform.position;
+
+        Monster monster = other.gameObject.GetComponent<Monster>();
+        if (monster != null)
+        {
+            Vector3 direction = (other.transform.position - transform.position).normalized;
+            Damage damage = new Damage(_arrackDamage, direction, _konckbackForce);
+            monster.TryTakeDamage(damage);
+        }
 
         ReleaseToPool();
     }
