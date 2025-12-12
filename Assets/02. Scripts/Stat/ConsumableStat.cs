@@ -62,4 +62,13 @@ public class ConsumableStat
     {
         _value = amount;
     }
+
+    public void Decrease(float amount)
+    {
+        _value -= amount;
+        if (_value < 0)
+        {
+            _value = 0;
+        }
+    }
 }

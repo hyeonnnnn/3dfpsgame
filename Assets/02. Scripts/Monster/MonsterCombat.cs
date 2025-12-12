@@ -30,7 +30,7 @@ public class MonsterCombat : MonoBehaviour
 
     public bool TryTakeDamage(Damage damage)
     {
-        _stats.Health.Consume(damage.Value);
+        _stats.Health.Decrease(damage.Value);
 
         if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
 

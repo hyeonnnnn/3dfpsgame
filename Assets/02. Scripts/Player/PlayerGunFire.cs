@@ -72,6 +72,12 @@ public class PlayerGunFire : MonoBehaviour
                 Damage damage = new Damage(_stats.Damage.Value, direction, _knockbackForce);
                 monster.TryTakeDamage(damage);
             }
+
+            Barrel barrel = hitInfo.transform.GetComponent<Barrel>();
+            if (barrel != null)
+            {
+                barrel.TakeDamage(_stats.Damage.Value);
+            }
         }
 
         _ammoController.ConsumeMagazine();

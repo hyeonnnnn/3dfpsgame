@@ -6,7 +6,8 @@ public class Bomb : MonoBehaviour
     [SerializeField] private GameObject _explosionEffectPrefab;
 
     [SerializeField] private float _konckbackForce = 8f;
-    [SerializeField] private float _arrackDamage = 20f;
+    [SerializeField] private float _attackDamage = 50f;
+    [SerializeField] private float _attackRadius = 2f;
 
     private IObjectPool<Bomb> _managedPool;
     private bool _isReleased;
@@ -18,19 +19,24 @@ public class Bomb : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        GameObject effectObject = Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
+        Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
 
-        if (!other.gameObject.CompareTag("Monster"))
-        {
-            ReleaseToPool();
-            return;
-        }
+        Vector3 position = transform.position;
+        Collider[] colliders = Physics.OverlapSphere(position, _attackRadius, LayerMask.GetMask("Monster"));
 
-        Monster monster = other.gameObject.GetComponent<Monster>();
-        if (monster != null)
+        for (int i = 0; i < colliders.Length; i++)
         {
-            Vector3 direction = (other.transform.position - transform.position).normalized;
-            Damage damage = new Damage(_arrackDamage, direction, _konckbackForce);
+            Monster monster = colliders[i].GetComponent<Monster>();
+            if (monster == null) continue;
+
+            Vector3 direction = (colliders[i].transform.position - position).normalized;
+
+            // 거리에 따라 데미지 적용
+            float distance = Vector3.Distance(colliders[i].transform.position, position);
+            distance = Mathf.Max(distance, 1f);
+            float finalDamage = _attackDamage / distance;
+
+            Damage damage = new Damage(finalDamage, direction, _konckbackForce);
             monster.TryTakeDamage(damage);
         }
 

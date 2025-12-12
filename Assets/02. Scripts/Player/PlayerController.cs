@@ -15,9 +15,14 @@ public class PlayerController : MonoBehaviour
         _controller = GetComponent<CharacterController>();
     }
 
+    public void TryTakeDamage(Damage damage)
+    {
+        TakeDamage(damage);
+    }
+
     public void TakeDamage(Damage damage)
     {
-        _playerStats.Health.Consume(damage.Value);
+        _playerStats.Health.Decrease(damage.Value);
         StartCoroutine(Hit_Coroutine(damage.Direction, damage.KnockbackForce));
 
         if (_playerStats.Health.Value <= 0f)

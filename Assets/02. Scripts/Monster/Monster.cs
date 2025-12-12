@@ -68,6 +68,8 @@ public class Monster : MonoBehaviour
     {
         if (State == EMonsterState.Death) return false;
 
+        Debug.Log($"Monster took {damage.Value} damage.");
+
         ChangeState(_stats.Health.Value - damage.Value > 0f ? EMonsterState.Hit : EMonsterState.Death);
         return _combat.TryTakeDamage(damage);
     }
