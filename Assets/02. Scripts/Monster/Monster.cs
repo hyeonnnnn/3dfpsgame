@@ -18,6 +18,7 @@ public struct Damage
 
 public enum EMonsterMoveType
 {
+    Idle,
     MoveForward,
     TurnLeft,
     TurnRight,
@@ -212,6 +213,8 @@ public class Monster : MonoBehaviour
     {
         switch (_currentMoveType)
         {
+            case EMonsterMoveType.Idle:
+                break;
             case EMonsterMoveType.MoveForward:
                 _controller.Move(transform.forward * _moveSpeed * Time.deltaTime);
                 break;
