@@ -33,7 +33,7 @@ public class CameraFollow : MonoBehaviour
 
     private void TrySwitchView()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T) && !_isTransitioning)
         {
             _isTpsView = !_isTpsView;
             _currentViewTarget = _isTpsView ? _tpsViewTarget : _fpsViewTarget;

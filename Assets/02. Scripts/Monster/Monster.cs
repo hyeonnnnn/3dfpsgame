@@ -1,50 +1,38 @@
-using DG.Tweening;
-using System.Collections;
 using UnityEngine;
 
-public enum EMonsterMoveType
-{
-    Idle,
-    MoveForward,
-    TurnLeft,
-    TurnRight,
-}
-
-[RequireComponent(typeof(Renderer))]
 public class Monster : MonoBehaviour
 {
     public EMonsterState State = EMonsterState.Idle;
 
     private MonsterStats _stats;
-    private float _attackTimer = 0f;
+    private MonsterMovement _movement;
+    private MonsterCombat _combat;
+    private MonsterPatrol _patrol;
 
-    // 레퍼런스
     private GameObject _player;
     private PlayerController _playerController;
-    private CharacterController _controller;
-    private Renderer _renderer;
 
     private Vector3 _originPosition;
-    private Coroutine _currentCoroutine;
-
-    private float _patrolInterval;
-    private float _patrolMaxInterval = 5f;
-    private float _patrolMinInterval = 2f;
-    private float _patrolTimer = 0f;
-    private float _turnDuration = 0.4f;
-
-    private float _gravity = -9.81f;
-    private float _yVelocity = 0f;
-
-    // 히트 이펙트
-    private Color _hitColor = Color.red;
-    private Color _originalColor;
+    private float _attackTimer = 0f;
 
     private void Awake()
     {
-        _controller = GetComponent<CharacterController>();
-        _renderer = GetComponent<Renderer>();
         _stats = GetComponent<MonsterStats>();
+        _movement = GetComponent<MonsterMovement>();
+        _combat = GetComponent<MonsterCombat>();
+        _patrol = GetComponent<MonsterPatrol>();
+    }
+
+    private void OnEnable()
+    {
+        _combat.OnHitComplete += HandleHitComplete;
+        _combat.OnDeath += HandleDeath;
+    }
+
+    private void OnDisable()
+    {
+        _combat.OnHitComplete -= HandleHitComplete;
+        _combat.OnDeath -= HandleDeath;
     }
 
     private void Start()
@@ -57,7 +45,6 @@ public class Monster : MonoBehaviour
         }
 
         _originPosition = transform.position;
-        _originalColor = _renderer.material.color;
     }
 
     private void Update()
@@ -65,7 +52,7 @@ public class Monster : MonoBehaviour
         if (State == EMonsterState.Death) return;
         if (State == EMonsterState.Hit) return;
 
-        ApplyGravity();
+        _movement.ApplyGravity();
 
         switch (State)
         {
@@ -77,13 +64,29 @@ public class Monster : MonoBehaviour
         }
     }
 
+    public bool TryTakeDamage(Damage damage)
+    {
+        if (State == EMonsterState.Death) return false;
+
+        ChangeState(_stats.Health.Value - damage.Value > 0f ? EMonsterState.Hit : EMonsterState.Death);
+        return _combat.TryTakeDamage(damage);
+    }
+
+    private void HandleHitComplete()
+    {
+        ChangeState(EMonsterState.Trace);
+    }
+
+    private void HandleDeath()
+    {
+        ChangeState(EMonsterState.Death);
+    }
+
     private void Idle()
     {
-        // Todo. Idle 애니메이션 재생
         if (_player == null) return;
 
-
-        if (Vector3.Distance(transform.position, _player.transform.position) <= _stats.DetectRange.Value)
+        if (GetDistanceToPlayer() <= _stats.DetectRange.Value)
         {
             ChangeState(EMonsterState.Trace);
         }
@@ -101,11 +104,10 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        MoveTo(_player.transform.position);
+        _movement.MoveTo(_player.transform.position);
 
-        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
+        float distanceToPlayer = GetDistanceToPlayer();
 
-        // Todo. Run 애니메이션 재생
         if (distanceToPlayer > _stats.TraceRange.Value)
         {
             ChangeState(EMonsterState.Comeback);
@@ -119,19 +121,18 @@ public class Monster : MonoBehaviour
 
     private void Comeback()
     {
-        MoveTo(_originPosition);
+        _movement.MoveTo(_originPosition);
 
         float distanceToOrigin = Vector3.Distance(transform.position, _originPosition);
-        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
 
         if (distanceToOrigin <= 1f)
         {
             ChangeState(EMonsterState.Idle);
             return;
         }
-        
+
         if (_player == null) return;
-        if (distanceToPlayer <= _stats.DetectRange.Value)
+        if (GetDistanceToPlayer() <= _stats.DetectRange.Value)
         {
             ChangeState(EMonsterState.Attack);
         }
@@ -145,131 +146,30 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
-        if (distanceToPlayer > _stats.AttackRange.Value)
-        {
-            State = EMonsterState.Trace;
-            return;
-        }
-
-
-        _attackTimer += Time.deltaTime;
-        if (_attackTimer >= _stats.AttackInterval.Value)
-        {
-            Vector3 direction = (_player.transform.position - transform.position).normalized;
-            PerformAttack(direction);
-        }
-    }
-
-    private EMonsterMoveType _currentMoveType = EMonsterMoveType.MoveForward;
-
-    private void Patrol()
-    {
-        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
-        if (_player != null && distanceToPlayer <= _stats.DetectRange.Value)
+        if (GetDistanceToPlayer() > _stats.AttackRange.Value)
         {
             ChangeState(EMonsterState.Trace);
             return;
         }
 
-        DecidePatrolAction();
-        ExecutePatrolAction();
-    }
-
-    private void DecidePatrolAction()
-    {
-        _patrolTimer += Time.deltaTime;
-
-        if (_patrolTimer < _patrolInterval) return;
-
-        _patrolTimer = 0f;
-        _patrolInterval = Random.Range(_patrolMinInterval, _patrolMaxInterval);
-
-        int length = System.Enum.GetValues(typeof(EMonsterMoveType)).Length;
-        _currentMoveType = (EMonsterMoveType)Random.Range(0, length);
-    }
-
-    private void ExecutePatrolAction()
-    {
-        switch (_currentMoveType)
+        _attackTimer += Time.deltaTime;
+        if (_attackTimer >= _stats.AttackInterval.Value)
         {
-            case EMonsterMoveType.Idle:
-                break;
-            case EMonsterMoveType.MoveForward:
-                _controller.Move(transform.forward * _stats.MoveSpeed.Value * Time.deltaTime);
-                break;
-            case EMonsterMoveType.TurnLeft:
-                transform.DORotate(new Vector3(0, transform.eulerAngles.y + 90f, 0), _turnDuration);
-                _currentMoveType = EMonsterMoveType.MoveForward;
-                break;
-            case EMonsterMoveType.TurnRight:
-                transform.DORotate(new Vector3(0, transform.eulerAngles.y - 90f, 0), _turnDuration);
-                _currentMoveType = EMonsterMoveType.MoveForward;
-                break;
+            _attackTimer = 0f;
+            Vector3 direction = (_player.transform.position - transform.position).normalized;
+            _combat.PerformAttack(_playerController, direction);
         }
     }
 
-    public bool TryTakeDamage(Damage damage)
+    private void Patrol()
     {
-        if (State == EMonsterState.Death) return false;
-
-        _stats.Health.Consume(damage.Value);
-
-        if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
-
-        if (_stats.Health.Value > 0f)
+        if (_player != null && GetDistanceToPlayer() <= _stats.DetectRange.Value)
         {
-            ChangeState(EMonsterState.Hit);
-            _currentCoroutine = StartCoroutine(Hit_Coroutine(damage.Direction, damage.KnockbackForce));
-        }
-        else
-        {
-            ChangeState(EMonsterState.Death);
-            _currentCoroutine = StartCoroutine(Death_Coroutine());
-        }
-        return true;
-    }
-
-    private IEnumerator Hit_Coroutine(Vector3 direction, float knockbackForce)
-    {
-        float elapsed = 0f;
-        direction.y = 0f;
-        direction.Normalize();
-        Vector3 knockbackVelocity = direction * knockbackForce;
-
-        _renderer.material.color = _hitColor;
-
-        while (elapsed < _stats.KnockbackDuration.Value)
-        {
-            elapsed += Time.deltaTime;
-            float progress = elapsed / _stats.KnockbackDuration.Value;
-            Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
-
-            if (_controller.isGrounded)
-            {
-                _yVelocity = -0.5f;
-            }
-            else
-            {
-                _yVelocity += _gravity * Time.deltaTime;
-            }
-            velocity.y = _yVelocity;
-
-            _controller.Move(velocity * Time.deltaTime);
-            yield return null;
+            ChangeState(EMonsterState.Trace);
+            return;
         }
 
-        _renderer.material.color = _originalColor;
-
-        yield return new WaitForSeconds(0.1f);
-        ChangeState(EMonsterState.Trace);
-        _currentCoroutine = null;
-    }
-
-    private IEnumerator Death_Coroutine()
-    {
-        yield return new WaitForSeconds(0.2f);
-        Destroy(gameObject);
+        _patrol.UpdatePatrol();
     }
 
     private void ChangeState(EMonsterState newState)
@@ -277,34 +177,8 @@ public class Monster : MonoBehaviour
         State = newState;
     }
 
-    private void MoveTo(Vector3 targetPosition)
+    private float GetDistanceToPlayer()
     {
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        _controller.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
-        transform.rotation = Quaternion.LookRotation(direction);
-    }
-
-    private void PerformAttack(Vector3 direction)
-    {
-        _attackTimer = 0f;
-        if (_playerController != null)
-        {
-            Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
-            _playerController.TakeDamage(damage);
-        }
-    }
-
-    private void ApplyGravity()
-    {
-        if (_controller.isGrounded)
-        {
-            _yVelocity = -0.5f;
-        }
-        else
-        {
-            _yVelocity += _gravity * Time.deltaTime;
-        }
-
-        _controller.Move(new Vector3(0, _yVelocity, 0) * Time.deltaTime);
+        return Vector3.Distance(transform.position, _player.transform.position);
     }
 }

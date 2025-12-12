@@ -3,23 +3,20 @@ using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
-    private Vector3 _originPosition;
     private Quaternion _originRotation;
     private Coroutine _currentShake;
 
     private void Awake()
     {
-        _originPosition = transform.localPosition;
         _originRotation = transform.localRotation;
     }
-
 
     public void Recoil(float duration, float magnitude)
     {
         if (_currentShake != null)
         {
             StopCoroutine(_currentShake);
-            transform.localPosition = _originPosition;
+            transform.localRotation = _originRotation;
         }
         _currentShake = StartCoroutine(Recoil_Coroutine(duration, magnitude));
     }

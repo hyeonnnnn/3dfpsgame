@@ -18,7 +18,7 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField] private UI_Crosshair _crosshair;
 
     private PlayerStats _stats;
-    [SerializeField] private float _nockbackForce = 4f;
+    [SerializeField] private float _knockbackForce = 4f;
 
     private void Awake()
     {
@@ -69,7 +69,7 @@ public class PlayerGunFire : MonoBehaviour
             if (monster != null)
             {
                 Vector3 direction = (hitInfo.transform.position - _fireTransform.position).normalized;
-                Damage damage = new Damage(_stats.Damage.Value, direction, _nockbackForce);
+                Damage damage = new Damage(_stats.Damage.Value, direction, _knockbackForce);
                 monster.TryTakeDamage(damage);
             }
         }
