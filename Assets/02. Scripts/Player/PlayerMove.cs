@@ -11,8 +11,8 @@ public class PlayerMove : MonoBehaviour
         public float RunStaminaValue = 10f;
         public float JumpStaminaValue = 10f;
         public int MaxJumpCount = 2;
-
     }
+
     public MoveConfig _config;
 
     private CharacterController _characterController;

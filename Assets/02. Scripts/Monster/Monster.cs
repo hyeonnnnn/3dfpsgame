@@ -33,6 +33,9 @@ public class Monster : MonoBehaviour
     private float _patrolTimer = 0f;
     private float _turnDuration = 0.4f;
 
+    private float _gravity = -9.81f;
+    private float _yVelocity = 0f;
+
     // 히트 이펙트
     private Color _hitColor = Color.red;
     private Color _originalColor;
@@ -61,6 +64,8 @@ public class Monster : MonoBehaviour
     {
         if (State == EMonsterState.Death) return;
         if (State == EMonsterState.Hit) return;
+
+        ApplyGravity();
 
         switch (State)
         {
@@ -228,6 +233,8 @@ public class Monster : MonoBehaviour
     private IEnumerator Hit_Coroutine(Vector3 direction, float knockbackForce)
     {
         float elapsed = 0f;
+        direction.y = 0f;
+        direction.Normalize();
         Vector3 knockbackVelocity = direction * knockbackForce;
 
         _renderer.material.color = _hitColor;
@@ -237,6 +244,16 @@ public class Monster : MonoBehaviour
             elapsed += Time.deltaTime;
             float progress = elapsed / _stats.KnockbackDuration.Value;
             Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
+
+            if (_controller.isGrounded)
+            {
+                _yVelocity = -0.5f;
+            }
+            else
+            {
+                _yVelocity += _gravity * Time.deltaTime;
+            }
+            velocity.y = _yVelocity;
 
             _controller.Move(velocity * Time.deltaTime);
             yield return null;
@@ -275,6 +292,19 @@ public class Monster : MonoBehaviour
             Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
             _playerController.TakeDamage(damage);
         }
-        Debug.Log("Monster Attack!");
+    }
+
+    private void ApplyGravity()
+    {
+        if (_controller.isGrounded)
+        {
+            _yVelocity = -0.5f;
+        }
+        else
+        {
+            _yVelocity += _gravity * Time.deltaTime;
+        }
+
+        _controller.Move(new Vector3(0, _yVelocity, 0) * Time.deltaTime);
     }
 }

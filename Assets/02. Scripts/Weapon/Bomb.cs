@@ -1,4 +1,3 @@
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -7,14 +6,23 @@ public class Bomb : MonoBehaviour
     [SerializeField] private GameObject _explosionEffectPrefab;
 
     [SerializeField] private float _konckbackForce = 8f;
-    [SerializeField] private float _damageMultiplier = 2f;
     [SerializeField] private float _arrackDamage = 20f;
 
     private IObjectPool<Bomb> _managedPool;
+    private bool _isReleased;
+
+    private void OnEnable()
+    {
+        _isReleased = false;
+    }
 
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log(other.gameObject);
+        if (!other.gameObject.CompareTag("Monster"))
+        {
+            ReleaseToPool();
+            return;
+        }
 
         GameObject effectObject = Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
         effectObject.transform.position = transform.position;
@@ -37,6 +45,8 @@ public class Bomb : MonoBehaviour
 
     public void ReleaseToPool()
     {
+        if (_isReleased) return;
+        _isReleased = true;
         _managedPool?.Release(this);
     }
 }
