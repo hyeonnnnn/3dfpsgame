@@ -2111,6 +2111,7 @@ GameObject:
   - component: {fileID: 1078302632}
   - component: {fileID: 1078302631}
   - component: {fileID: 1078302630}
+  - component: {fileID: 1078302635}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
@@ -2131,15 +2132,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   State: 0
-  _health: 5000
-  _moveSpeed: 2
-  _knockbackDuration: 0.2
-  _detectRange: 4
-  _traceRange: 15
-  _attackRange: 2
-  _attackInterval: 1
-  _attackDamage: 10
-  _nockbackForce: 5
 --- !u!143 &1078302631
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2237,6 +2229,38 @@ Transform:
   - {fileID: 410808577}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1078302635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1078302629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7d97bbfe4d967249ac9c9ba23d499b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField:
+    _maxValue: 50
+    _value: 50
+    _regenValue: 0
+  <MoveSpeed>k__BackingField:
+    _value: 2
+  <DetectRange>k__BackingField:
+    _value: 15
+  <TraceRange>k__BackingField:
+    _value: 10
+  <AttackRange>k__BackingField:
+    _value: 2
+  <AttackInterval>k__BackingField:
+    _value: 1
+  <AttackDamage>k__BackingField:
+    _value: 10
+  <KnockbackDuration>k__BackingField:
+    _value: 1
+  <KnockbackForce>k__BackingField:
+    _value: 3
 --- !u!1 &1090749353
 GameObject:
   m_ObjectHideFlags: 0

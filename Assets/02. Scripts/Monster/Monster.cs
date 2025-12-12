@@ -2,20 +2,6 @@ using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
-public struct Damage
-{
-    public float Value;
-    public Vector3 Direction;
-    public float KnockbackForce;
-
-    public Damage(float value, Vector3 direction, float knockbackForce)
-    {
-        Value = value;
-        Direction = direction;
-        KnockbackForce = knockbackForce;
-    }
-}
-
 public enum EMonsterMoveType
 {
     Idle,
@@ -29,19 +15,7 @@ public class Monster : MonoBehaviour
 {
     public EMonsterState State = EMonsterState.Idle;
 
-    // 스탯
-    [SerializeField] private float _health = 100f;
-    [SerializeField] private float _moveSpeed = 5f;
-    [SerializeField] private float _knockbackDuration = 0.2f;
-
-    // 공격
-    [SerializeField] private float _detectRange = 4f;
-    [SerializeField] private float _traceRange = 15f;
-    [SerializeField] private float _attackRange = 2f;
-    [SerializeField] private float _attackInterval = 2;
-    [SerializeField] private float _attackDamage = 10f;
-    [SerializeField] private float _nockbackForce = 2f;
-
+    private MonsterStats _stats;
     private float _attackTimer = 0f;
 
     // 레퍼런스
@@ -67,6 +41,7 @@ public class Monster : MonoBehaviour
     {
         _controller = GetComponent<CharacterController>();
         _renderer = GetComponent<Renderer>();
+        _stats = GetComponent<MonsterStats>();
     }
 
     private void Start()
@@ -103,7 +78,7 @@ public class Monster : MonoBehaviour
         if (_player == null) return;
 
 
-        if (Vector3.Distance(transform.position, _player.transform.position) <= _detectRange)
+        if (Vector3.Distance(transform.position, _player.transform.position) <= _stats.DetectRange.Value)
         {
             ChangeState(EMonsterState.Trace);
         }
@@ -126,12 +101,12 @@ public class Monster : MonoBehaviour
         float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
 
         // Todo. Run 애니메이션 재생
-        if (distanceToPlayer > _traceRange)
+        if (distanceToPlayer > _stats.TraceRange.Value)
         {
             ChangeState(EMonsterState.Comeback);
         }
 
-        if (distanceToPlayer <= _attackRange)
+        if (distanceToPlayer <= _stats.AttackRange.Value)
         {
             ChangeState(EMonsterState.Attack);
         }
@@ -151,7 +126,7 @@ public class Monster : MonoBehaviour
         }
         
         if (_player == null) return;
-        if (distanceToPlayer <= _detectRange)
+        if (distanceToPlayer <= _stats.DetectRange.Value)
         {
             ChangeState(EMonsterState.Attack);
         }
@@ -166,7 +141,7 @@ public class Monster : MonoBehaviour
         }
 
         float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
-        if (distanceToPlayer > _attackRange)
+        if (distanceToPlayer > _stats.AttackRange.Value)
         {
             State = EMonsterState.Trace;
             return;
@@ -174,7 +149,7 @@ public class Monster : MonoBehaviour
 
 
         _attackTimer += Time.deltaTime;
-        if (_attackTimer >= _attackInterval)
+        if (_attackTimer >= _stats.AttackInterval.Value)
         {
             Vector3 direction = (_player.transform.position - transform.position).normalized;
             PerformAttack(direction);
@@ -186,7 +161,7 @@ public class Monster : MonoBehaviour
     private void Patrol()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
-        if (_player != null && distanceToPlayer <= _detectRange)
+        if (_player != null && distanceToPlayer <= _stats.DetectRange.Value)
         {
             ChangeState(EMonsterState.Trace);
             return;
@@ -216,7 +191,7 @@ public class Monster : MonoBehaviour
             case EMonsterMoveType.Idle:
                 break;
             case EMonsterMoveType.MoveForward:
-                _controller.Move(transform.forward * _moveSpeed * Time.deltaTime);
+                _controller.Move(transform.forward * _stats.MoveSpeed.Value * Time.deltaTime);
                 break;
             case EMonsterMoveType.TurnLeft:
                 transform.DORotate(new Vector3(0, transform.eulerAngles.y + 90f, 0), _turnDuration);
@@ -233,11 +208,11 @@ public class Monster : MonoBehaviour
     {
         if (State == EMonsterState.Death) return false;
 
-        _health -= damage.Value;
+        _stats.Health.Consume(damage.Value);
 
         if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
 
-        if (_health > 0f)
+        if (_stats.Health.Value > 0f)
         {
             ChangeState(EMonsterState.Hit);
             _currentCoroutine = StartCoroutine(Hit_Coroutine(damage.Direction, damage.KnockbackForce));
@@ -257,10 +232,10 @@ public class Monster : MonoBehaviour
 
         _renderer.material.color = _hitColor;
 
-        while (elapsed < _knockbackDuration)
+        while (elapsed < _stats.KnockbackDuration.Value)
         {
             elapsed += Time.deltaTime;
-            float progress = elapsed / _knockbackDuration;
+            float progress = elapsed / _stats.KnockbackDuration.Value;
             Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
 
             _controller.Move(velocity * Time.deltaTime);
@@ -288,7 +263,7 @@ public class Monster : MonoBehaviour
     private void MoveTo(Vector3 targetPosition)
     {
         Vector3 direction = (targetPosition - transform.position).normalized;
-        _controller.Move(direction * _moveSpeed * Time.deltaTime);
+        _controller.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
         transform.rotation = Quaternion.LookRotation(direction);
     }
 
@@ -297,7 +272,7 @@ public class Monster : MonoBehaviour
         _attackTimer = 0f;
         if (_playerController != null)
         {
-            Damage damage = new Damage(_attackDamage, direction, _nockbackForce);
+            Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
             _playerController.TakeDamage(damage);
         }
         Debug.Log("Monster Attack!");
