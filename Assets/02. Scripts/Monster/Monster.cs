@@ -4,7 +4,7 @@ public class Monster : MonoBehaviour
 {
     public EMonsterState State = EMonsterState.Idle;
 
-    private MonsterStats _stats;
+    private MonsterStat _stats;
     private MonsterMovement _movement;
     private MonsterCombat _combat;
     private MonsterPatrol _patrol;
@@ -17,7 +17,7 @@ public class Monster : MonoBehaviour
 
     private void Awake()
     {
-        _stats = GetComponent<MonsterStats>();
+        _stats = GetComponent<MonsterStat>();
         _movement = GetComponent<MonsterMovement>();
         _combat = GetComponent<MonsterCombat>();
         _patrol = GetComponent<MonsterPatrol>();
@@ -49,6 +49,9 @@ public class Monster : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State == EGameState.Ready) return;
+        if (GameManager.Instance.State == EGameState.GameOver) return;
+
         if (State == EMonsterState.Death) return;
         if (State == EMonsterState.Hit) return;
 

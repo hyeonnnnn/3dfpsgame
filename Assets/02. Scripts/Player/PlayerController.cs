@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerController : MonoBehaviour
@@ -8,6 +9,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
 
     [SerializeField] private float _knockbackDuration = 0.2f;
+
+    public Action OnPlayerDeath;
+    public Action OnDamaged;
 
     private void Awake()
     {
@@ -22,6 +26,8 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(Damage damage)
     {
+        OnDamaged?.Invoke();
+
         _playerStats.Health.Decrease(damage.Value);
         StartCoroutine(Hit_Coroutine(damage.Direction, damage.KnockbackForce));
 
@@ -51,6 +57,7 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
+        OnPlayerDeath?.Invoke();
         Destroy(gameObject);
     }
 }

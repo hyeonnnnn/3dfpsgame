@@ -44,6 +44,9 @@ public class PlayerBombFire : MonoBehaviour
 
     private void TryFire()
     {
+        if (GameManager.Instance.State == EGameState.Ready) return;
+        if (GameManager.Instance.State == EGameState.GameOver) return;
+
         if (Input.GetMouseButtonDown(1))
         {
             if (_bombCount <= 0) return;

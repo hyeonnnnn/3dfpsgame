@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerGunFire : MonoBehaviour
 {
@@ -43,6 +44,11 @@ public class PlayerGunFire : MonoBehaviour
 
     private void TryFire()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+
+        if (GameManager.Instance.State == EGameState.Ready) return;
+        if (GameManager.Instance.State == EGameState.GameOver) return;
+
         if (_fireTimer < _fireCoolTime) return;
         if (_ammoController.IsReloading) return;
         if (_ammoController.HasAmmunition() == false) return;
@@ -60,7 +66,6 @@ public class PlayerGunFire : MonoBehaviour
 
         if (isHit)
         {
-            Debug.Log($"Hit : {hitInfo.transform.name}");
             _hitEffect.transform.position = hitInfo.point;
             _hitEffect.transform.forward = hitInfo.normal;
             _hitEffect.Play();

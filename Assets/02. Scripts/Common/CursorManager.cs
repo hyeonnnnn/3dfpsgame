@@ -4,7 +4,7 @@ public class CursorManager : MonoBehaviour
 {
     void Awake()
     {
-        LockCursor();
+        UnlockCursor();
     }
 
     public void LockCursor()
