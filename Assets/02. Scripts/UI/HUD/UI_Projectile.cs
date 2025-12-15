@@ -28,6 +28,6 @@ public class UI_Projectile : MonoBehaviour
 
     private void UpdateMagazineCount(int currentCount, int remaingCount)
     {
-        _magazineCount.text = $"Bullets: {currentCount} / {remaingCount}";
+        _magazineCount.text = $"Magazines: {currentCount} / {remaingCount}";
     }
 }
