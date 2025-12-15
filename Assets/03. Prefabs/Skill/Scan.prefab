@@ -154,7 +154,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b34d27c4d429792499296972bed08395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scanSpeed: 1
+  _maxScale: 500
+  _scanSpeed: 30
+  _initialScale: 1
 --- !u!1 &7932718117123933158
 GameObject:
   m_ObjectHideFlags: 0

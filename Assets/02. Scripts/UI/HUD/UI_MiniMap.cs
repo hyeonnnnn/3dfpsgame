@@ -25,15 +25,13 @@ public class UI_MiniMap : MonoBehaviour
 
     public void HandleZoomInButtonClicked()
     {
-        _currentZoom -= _zoomStep;
-        if (_currentZoom <= _minZoom) _currentZoom = _minZoom;
+        _currentZoom = Mathf.Clamp(_currentZoom - _zoomStep, _minZoom, _maxZoom);
         _miniMapCamera.SetOffsetY(_currentZoom);
     }
 
     public void HandleZoomOutButtonClicked()
     {
-        _currentZoom += _zoomStep;
-        if (_currentZoom >= _maxZoom) _currentZoom = _maxZoom;
+        _currentZoom = Mathf.Clamp(_currentZoom + _zoomStep, _minZoom, _maxZoom);
         _miniMapCamera.SetOffsetY(_currentZoom);
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerScan : MonoBehaviour
 {
-    [SerializeField] private Scan _scanEffectPrefab;
+    [SerializeField] private GameObject _scanEffectPrefab;
 
     private void Update()
     {
@@ -10,7 +10,7 @@ public class PlayerScan : MonoBehaviour
         {
             if (_scanEffectPrefab != null)
             {
-                _scanEffectPrefab.gameObject.SetActive(true);
+                Instantiate(_scanEffectPrefab, transform.position, Quaternion.identity);
             }
         }
     }

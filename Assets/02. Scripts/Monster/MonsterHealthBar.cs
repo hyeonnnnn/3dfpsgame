@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(MonsterStat))]
-public class MonsterHeathBar : MonoBehaviour
+public class MonsterHealthBar : MonoBehaviour
 {
     private MonsterStat _stat;
 
@@ -19,11 +19,15 @@ public class MonsterHeathBar : MonoBehaviour
 
     [Header("피격 효과")]
     [SerializeField] private Color _hitColor = new Color(1f, 1f, 1f, 0.5f);
+    private const float HitEffectDuration = 0.1f;
+    private const float DelayGuageDelay = 0.2f;
 
     [Header("떨림 효과")]
     [SerializeField] private float _shakeDuration = 0.2f;
     [SerializeField] private float _shakeStrength = 0.15f;
 
+    private Vector3 _originalLocalPosition;
+    private Tweener _shakeTweener;
     private float _lastHealth = -1;
     private Coroutine _delayCoroutine;
     private Coroutine _hitEffectCoroutine;
@@ -34,6 +38,7 @@ public class MonsterHeathBar : MonoBehaviour
     {
         _stat = GetComponent<MonsterStat>();
         _originalColor = _guageImage.color;
+        _originalLocalPosition = _healthBarTransform.localPosition;
         _mainCamera = Camera.main;
     }
 
@@ -56,7 +61,7 @@ public class MonsterHeathBar : MonoBehaviour
 
     private IEnumerator DelayGauge_Coroutine()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(DelayGuageDelay);
 
         while (Mathf.Approximately(_delayGuageImage.fillAmount, _guageImage.fillAmount) == false)
         {
@@ -73,9 +78,11 @@ public class MonsterHeathBar : MonoBehaviour
     {
         _guageImage.color = _hitColor;
 
-        _healthBarTransform.DOShakePosition(_shakeDuration, _shakeStrength);
+        _shakeTweener?.Kill();
+        _healthBarTransform.localPosition = _originalLocalPosition;
+        _shakeTweener = _healthBarTransform.DOShakePosition(_shakeDuration, _shakeStrength);
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(HitEffectDuration);
         _guageImage.color = _originalColor;
     }
 }

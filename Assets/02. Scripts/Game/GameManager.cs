@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 
@@ -11,8 +11,12 @@ public class GameManager : MonoBehaviour
     private EGameState _state = EGameState.Ready;
     public EGameState State => _state;
 
-    [SerializeField] private TextMeshProUGUI _stateTextUI;
+    
     [SerializeField] private PlayerController _playerController;
+
+    private const float ReadyDuration = 2f;
+
+    public Action<EGameState> OnGameStateChange;
 
     private void Awake()
     {
@@ -27,36 +31,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (_playerController != null)
+            _playerController.OnPlayerDeath -= GameOver;
+    }
+
     private void Start()
     {
-        InitState();
-        StartCoroutine(StartToPlay_Coroutine());
+        if (_playerController != null)
+            _playerController.OnPlayerDeath += GameOver;
 
-        _playerController.OnPlayerDeath += GameOver;
-    }
-
-    private void InitState()
-    {
         _state = EGameState.Ready;
-        _stateTextUI.text = "준비 중..";
+        OnGameStateChange?.Invoke(_state);
+
+        StartCoroutine(GameStart_Coroutine());
     }
 
-    private IEnumerator StartToPlay_Coroutine()
+    private IEnumerator GameStart_Coroutine()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(ReadyDuration);
 
-        _stateTextUI.text = "시작!";
         _state = EGameState.Playing;
-
-        yield return new WaitForSeconds(1f);
-
-        _stateTextUI.gameObject.SetActive(false);
+        OnGameStateChange?.Invoke(_state);
     }
 
     private void GameOver()
     {
-        _stateTextUI.gameObject.SetActive(true);
         _state = EGameState.GameOver;
-        _stateTextUI.text = "게임 오버..";
+        OnGameStateChange?.Invoke(_state);
     }
+
 }
