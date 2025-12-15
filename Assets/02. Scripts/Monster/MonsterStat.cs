@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MonsterStats : MonoBehaviour
+public class MonsterStat : MonoBehaviour
 {
     [field: SerializeField] public ConsumableStat Health { get; private set; }
     [field: SerializeField] public ValueStat MoveSpeed { get; private set; }

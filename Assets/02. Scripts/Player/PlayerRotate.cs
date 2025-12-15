@@ -11,6 +11,9 @@ public class PlayerRotate : MonoBehaviour
     }
     private void Rotate()
     {
+        if (GameManager.Instance.State == EGameState.Ready) return;
+        if (GameManager.Instance.State == EGameState.GameOver) return;
+
         float mouseX = Input.GetAxis("Mouse X");
         _accumulationX += mouseX * _rotationSpeed * Time.deltaTime;
 

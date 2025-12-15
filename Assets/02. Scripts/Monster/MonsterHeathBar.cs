@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(MonsterStats))]
+[RequireComponent(typeof(MonsterStat))]
 public class MonsterHeathBar : MonoBehaviour
 {
-    private MonsterStats _stat;
+    private MonsterStat _stat;
     [SerializeField] private Transform _healthBarTransform;
     [SerializeField] private Image _guageImage;
 
@@ -12,10 +12,10 @@ public class MonsterHeathBar : MonoBehaviour
 
     private void Awake()
     {
-        _stat = GetComponent<MonsterStats>();
+        _stat = GetComponent<MonsterStat>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (_lastHealth != _stat.Health.Value)
         {

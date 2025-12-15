@@ -8,7 +8,7 @@ public class MonsterCombat : MonoBehaviour
     public event Action OnHitComplete;
     public event Action OnDeath;
 
-    private MonsterStats _stats;
+    private MonsterStat _stats;
     private MonsterMovement _movement;
     private Renderer _renderer;
 
@@ -19,7 +19,7 @@ public class MonsterCombat : MonoBehaviour
     private void Awake()
     {
         _renderer = GetComponent<Renderer>();
-        _stats = GetComponent<MonsterStats>();
+        _stats = GetComponent<MonsterStat>();
         _movement = GetComponent<MonsterMovement>();
     }
 

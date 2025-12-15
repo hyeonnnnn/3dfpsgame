@@ -43,6 +43,9 @@ public class PlayerGunFire : MonoBehaviour
 
     private void TryFire()
     {
+        if (GameManager.Instance.State == EGameState.Ready) return;
+        if (GameManager.Instance.State == EGameState.GameOver) return;
+
         if (_fireTimer < _fireCoolTime) return;
         if (_ammoController.IsReloading) return;
         if (_ammoController.HasAmmunition() == false) return;

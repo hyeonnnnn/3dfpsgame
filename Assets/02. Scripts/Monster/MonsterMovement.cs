@@ -1,10 +1,11 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(MonsterStat))]
 public class MonsterMovement : MonoBehaviour
 {
     private CharacterController _controller;
-    private MonsterStats _stats;
+    private MonsterStat _stats;
 
     private float _gravity = -9.81f;
     private float _yVelocity = 0f;
@@ -12,7 +13,7 @@ public class MonsterMovement : MonoBehaviour
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
-        _stats = GetComponent<MonsterStats>();
+        _stats = GetComponent<MonsterStat>();
     }
 
     public void MoveTo(Vector3 targetPosition)

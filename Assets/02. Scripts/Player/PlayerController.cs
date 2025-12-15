@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerController : MonoBehaviour
@@ -8,6 +9,8 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
 
     [SerializeField] private float _knockbackDuration = 0.2f;
+
+    public Action OnPlayerDeath;
 
     private void Awake()
     {
@@ -51,6 +54,7 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
+        OnPlayerDeath?.Invoke();
         Destroy(gameObject);
     }
 }

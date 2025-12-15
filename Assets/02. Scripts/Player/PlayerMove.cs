@@ -36,6 +36,9 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State == EGameState.Ready) return;
+        if (GameManager.Instance.State == EGameState.GameOver) return;
+
         Move();
         Run();
     }

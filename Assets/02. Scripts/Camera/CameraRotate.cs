@@ -15,6 +15,9 @@ public class CameraRotate : MonoBehaviour
 
     private void Rotate()
     {
+        if (GameManager.Instance.State == EGameState.Ready) return;
+        if (GameManager.Instance.State == EGameState.GameOver) return;
+
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
