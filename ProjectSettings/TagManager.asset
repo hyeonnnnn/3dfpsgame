@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Monster
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
@@ -16,8 +17,8 @@ TagManager:
   - Player
   - Monster
   - Barrel
-  - 
-  - 
+  - MiniMap
+  - MonsterBodyParts
   - 
   - 
   - 

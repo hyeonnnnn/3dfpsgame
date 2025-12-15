@@ -47,7 +47,9 @@ public class GameManager : MonoBehaviour
 
         _stateTextUI.text = "시작!";
         _state = EGameState.Playing;
-        
+
+        yield return new WaitForSeconds(1f);
+
         _stateTextUI.gameObject.SetActive(false);
     }
 

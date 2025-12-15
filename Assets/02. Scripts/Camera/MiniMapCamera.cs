@@ -3,7 +3,21 @@ using UnityEngine;
 public class MiniMapCamera : MonoBehaviour
 {
     [SerializeField] private Transform _targetTransform;
-    [SerializeField] private float _offsetY = 10f;
+    [SerializeField] private float _offsetY = 8f;
+
+    private Camera _camera;
+
+    public float OffsetY => _offsetY;
+
+    private void Awake()
+    {
+        _camera = GetComponent<Camera>();
+    }
+
+    private void Start()
+    {
+        SetOffsetY(_offsetY);
+    }
 
     private void LateUpdate()
     {
@@ -18,5 +32,11 @@ public class MiniMapCamera : MonoBehaviour
         targetAngle.x = 90f;
 
         transform.eulerAngles = targetAngle;
+    }
+
+    public void SetOffsetY(float offsetY)
+    {
+        _offsetY = offsetY;
+        _camera.orthographicSize = offsetY;
     }
 }
