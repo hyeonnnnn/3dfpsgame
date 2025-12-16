@@ -1,28 +1,35 @@
+using System;
 using UnityEngine;
+using UnityEngine.AI;
 
-[RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(MonsterStat))]
 public class MonsterMovement : MonoBehaviour
 {
-    private CharacterController _controller;
+    private NavMeshAgent _agent;
     private MonsterStat _stats;
 
     private float _gravity = -9.81f;
     private float _yVelocity = 0f;
 
+
     private void Awake()
     {
-        _controller = GetComponent<CharacterController>();
+        _agent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<MonsterStat>();
     }
 
+    private void Start()
+    {
+        _agent.speed = _stats.MoveSpeed.Value;
+        _agent.stoppingDistance = _stats.AttackRange.Value;
+        _agent.angularSpeed = _stats.AngularSpeed.Value;
+    }
     public void MoveTo(Vector3 targetPosition)
     {
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        _controller.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
-        transform.rotation = Quaternion.LookRotation(direction);
+        _agent.SetDestination(targetPosition);
     }
 
+    /*
     public void MoveForward()
     {
         _controller.Move(transform.forward * _stats.MoveSpeed.Value * Time.deltaTime);
@@ -55,5 +62,5 @@ public class MonsterMovement : MonoBehaviour
         velocity.y = _yVelocity;
 
         _controller.Move(velocity * Time.deltaTime);
-    }
+    }*/
 }

@@ -3,25 +3,26 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private Transform _fpsViewTarget;
-    [SerializeField] private Transform _tpsViewTarget;
+    [SerializeField] private Transform[] _viewTarget;
 
     [SerializeField] private float _viewSwitchDuration = 0.3f;
-
-    private bool _isTpsView = false;
     private bool _isTransitioning = false;
 
     private Transform _currentViewTarget;
+    private int _currenttargetIndex = 0;
 
     private void Start()
     {
-        _currentViewTarget = _fpsViewTarget;
+        if (_viewTarget.Length > 0)
+        {
+            _currentViewTarget = _viewTarget[_currenttargetIndex];
+        }
     }
 
     private void LateUpdate()
     {
-        if (_fpsViewTarget == null) return;
-        if (_tpsViewTarget == null) return;
+        if (_viewTarget.Length == 0) return;
+        if (_currentViewTarget == null) return;
 
         TrySwitchView();
 
@@ -33,26 +34,31 @@ public class CameraFollow : MonoBehaviour
 
     private void TrySwitchView()
     {
-        if (Input.GetKeyDown(KeyCode.T) && !_isTransitioning)
-        {
-            _isTpsView = !_isTpsView;
-            _currentViewTarget = _isTpsView ? _tpsViewTarget : _fpsViewTarget;
+        if (_isTransitioning) return;
 
-            StartCoroutine(SwitchViewCoroutine());
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            int direction = Input.GetKey(KeyCode.LeftShift) ? -1 : 1;
+            StartCoroutine(SwitchViewCoroutine(direction));
         }
     }
 
-    private IEnumerator SwitchViewCoroutine()
+    private IEnumerator SwitchViewCoroutine(int direction)
     {
         _isTransitioning = true;
         float progress = 0f;
 
-        Vector3 startPosition = transform.position;
+        Vector3 startPosition = _viewTarget[_currenttargetIndex].transform.position;
+        _currenttargetIndex = (_currenttargetIndex + direction + _viewTarget.Length) % _viewTarget.Length;
+
+        Vector3 targetPosition = _viewTarget[_currenttargetIndex].transform.position;
+        _currentViewTarget = _viewTarget[_currenttargetIndex];
 
         while (progress < 1f)
         {
             progress += Time.deltaTime / _viewSwitchDuration;
-            transform.position = Vector3.Lerp(startPosition, _currentViewTarget.position, progress);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, progress);
+
             yield return null;
         }
 

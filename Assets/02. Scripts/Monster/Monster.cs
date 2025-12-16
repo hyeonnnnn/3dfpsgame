@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Monster : MonoBehaviour
 {
@@ -11,9 +12,13 @@ public class Monster : MonoBehaviour
 
     private GameObject _player;
     private PlayerController _playerController;
+    private NavMeshAgent _agent;
 
     private Vector3 _originPosition;
     private float _attackTimer = 0f;
+
+    private Vector3 _jumpStartPosition;
+    private Vector3 _jumpEndPosition;
 
     private void Awake()
     {
@@ -21,6 +26,7 @@ public class Monster : MonoBehaviour
         _movement = GetComponent<MonsterMovement>();
         _combat = GetComponent<MonsterCombat>();
         _patrol = GetComponent<MonsterPatrol>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     private void OnEnable()
@@ -55,7 +61,7 @@ public class Monster : MonoBehaviour
         if (State == EMonsterState.Death) return;
         if (State == EMonsterState.Hit) return;
 
-        _movement.ApplyGravity();
+        //_movement.ApplyGravity();
 
         switch (State)
         {
@@ -64,14 +70,13 @@ public class Monster : MonoBehaviour
             case EMonsterState.Comeback: Comeback(); break;
             case EMonsterState.Attack: Attack(); break;
             case EMonsterState.Patrol: Patrol(); break;
+            case EMonsterState.Jump: Jump(); break;
         }
     }
 
     public bool TryTakeDamage(Damage damage)
     {
         if (State == EMonsterState.Death) return false;
-
-        Debug.Log($"Monster took {damage.Value} damage.");
 
         ChangeState(_stats.Health.Value - damage.Value > 0f ? EMonsterState.Hit : EMonsterState.Death);
         return _combat.TryTakeDamage(damage);
@@ -121,6 +126,19 @@ public class Monster : MonoBehaviour
         if (distanceToPlayer <= _stats.AttackRange.Value)
         {
             ChangeState(EMonsterState.Attack);
+        }
+
+        if (_agent.isOnOffMeshLink)
+        {
+            OffMeshLinkData linkData = _agent.currentOffMeshLinkData;
+            _jumpStartPosition = linkData.startPos;
+            _jumpEndPosition = linkData.endPos;
+
+            if (_jumpEndPosition.y > _jumpStartPosition.y)
+            {
+                ChangeState(EMonsterState.Jump);
+                return;
+            }
         }
     }
 
@@ -175,6 +193,17 @@ public class Monster : MonoBehaviour
         }
 
         _patrol.UpdatePatrol();
+    }
+
+    private void Jump()
+    {
+        _agent.isStopped = true;
+        _agent.ResetPath();
+
+        float jumpDistance = Vector3.Distance(_jumpStartPosition, _jumpEndPosition);
+        float jumpDuration = jumpDistance / _stats.MoveSpeed.Value;
+
+        _agent.CompleteOffMeshLink();
     }
 
     private void ChangeState(EMonsterState newState)
