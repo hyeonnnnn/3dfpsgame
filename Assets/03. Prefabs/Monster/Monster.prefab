@@ -625,7 +625,7 @@ MonoBehaviour:
     _value: 100
     _regenValue: 0
   <MoveSpeed>k__BackingField:
-    _value: 2
+    _value: 3
   <DetectRange>k__BackingField:
     _value: 30
   <TraceRange>k__BackingField:

@@ -51,9 +51,9 @@ public class MonsterPatrol : MonoBehaviour
         {
             case EMonsterMoveType.Idle:
                 break;
-/*            case EMonsterMoveType.MoveForward:
+            case EMonsterMoveType.MoveForward:
                 _movement.MoveForward();
-                break;*/
+                break;
             case EMonsterMoveType.TurnLeft:
                 transform.DORotate(new Vector3(0, transform.eulerAngles.y + 90f, 0), _turnDuration);
                 _currentMoveType = EMonsterMoveType.MoveForward;

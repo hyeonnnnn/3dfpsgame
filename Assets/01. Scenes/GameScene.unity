@@ -1200,13 +1200,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 315838292}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.17775393, y: -0, z: -0, w: 0.984075}
-  m_LocalPosition: {x: 55.67, y: 1.9, z: 33.43}
+  m_LocalRotation: {x: -0.16607173, y: 0, z: 0, w: 0.98611367}
+  m_LocalPosition: {x: 55.67, y: -0.17, z: 31.09}
   m_LocalScale: {x: 9.629208, y: 2.417045, z: 20.034071}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1623959036}
-  m_LocalEulerAnglesHint: {x: -20.478, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -19.119, y: 0, z: 0}
 --- !u!114 &315838294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3193,7 +3193,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 48.7401, y: 2.1469, z: 53.9087}
-  m_LocalScale: {x: 24.48, y: 9.0945, z: 28.217001}
+  m_LocalScale: {x: 24.48, y: 4.249354, z: 28.217001}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1623959036}
@@ -3286,12 +3286,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SerializedVersion: 1
   m_AgentTypeID: -1372625422
-  m_StartPoint: {x: -22.35, y: -2.29, z: 0}
-  m_EndPoint: {x: -12.2, y: 5.08, z: 0}
+  m_StartPoint: {x: -16, y: -2.22, z: 0}
+  m_EndPoint: {x: -11.74, y: 2.09, z: 0}
   m_StartTransform: {fileID: 0}
   m_EndTransform: {fileID: 0}
   m_Activated: 1
-  m_Width: 12.18
+  m_Width: 27.94
   m_CostModifier: 1
   m_IsOverridingCost: 0
   m_Bidirectional: 1
@@ -7114,13 +7114,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990401248}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.17775393, y: -0, z: -0, w: 0.984075}
-  m_LocalPosition: {x: 41.58, y: 1.9, z: 33.43}
+  m_LocalRotation: {x: -0.16606814, y: -0, z: -0, w: 0.9861143}
+  m_LocalPosition: {x: 41.58, y: -0.17, z: 31.09}
   m_LocalScale: {x: 9.629208, y: 2.417045, z: 20.034071}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1623959036}
-  m_LocalEulerAnglesHint: {x: -20.478, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -19.119, y: 0, z: 0}
 --- !u!65 &1990401250
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7627,6 +7627,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 38236178}
     m_Modifications:
+    - target: {fileID: 4843997379615768273, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
+      propertyPath: m_AutoTraverseOffMeshLink
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5440846124522934325, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_Name
       value: Monster

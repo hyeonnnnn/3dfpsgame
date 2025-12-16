@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -29,13 +30,12 @@ public class MonsterMovement : MonoBehaviour
         _agent.SetDestination(targetPosition);
     }
 
-    /*
     public void MoveForward()
     {
-        _controller.Move(transform.forward * _stats.MoveSpeed.Value * Time.deltaTime);
+        _agent.SetDestination(transform.forward);
     }
 
-    public void ApplyGravity()
+/*    public void ApplyGravity()
     {
         if (_controller.isGrounded)
         {
