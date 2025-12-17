@@ -1,38 +1,52 @@
 using UnityEngine;
+using UnityEngine.AI;
+using System.Collections;
 
 public class Monster : MonoBehaviour
 {
+    private const float ORIGIN_ARRIVAL_THRESHOLD = 1f;
+    private const float JUMP_HEIGHT_OFFSET = 0.5f;
+    private const float PARABOLA_MULTIPLIER = 4f;
+
     public EMonsterState State = EMonsterState.Idle;
 
-    private MonsterStat _stats;
-    private MonsterMovement _movement;
-    private MonsterCombat _combat;
-    private MonsterPatrol _patrol;
+    private MonsterStat _monsterStat;
+    private MonsterMove _monsterMovement;
+    private MonsterCombat _monsterCombat;
+    private MonsterPatrol _monsterPatrol;
 
     private GameObject _player;
     private PlayerController _playerController;
+    private NavMeshAgent _navMeshAgent;
 
     private Vector3 _originPosition;
     private float _attackTimer = 0f;
 
+    private Vector3 _jumpStartPosition;
+    private Vector3 _jumpEndPosition;
+    private bool _isJumping = false;
+    private float _jumpDuration = 0.5f;
+
+
     private void Awake()
     {
-        _stats = GetComponent<MonsterStat>();
-        _movement = GetComponent<MonsterMovement>();
-        _combat = GetComponent<MonsterCombat>();
-        _patrol = GetComponent<MonsterPatrol>();
+        _monsterStat = GetComponent<MonsterStat>();
+        _monsterMovement = GetComponent<MonsterMove>();
+        _monsterCombat = GetComponent<MonsterCombat>();
+        _monsterPatrol = GetComponent<MonsterPatrol>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
     private void OnEnable()
     {
-        _combat.OnHitComplete += HandleHitComplete;
-        _combat.OnDeath += HandleDeath;
+        _monsterCombat.OnHitComplete += HandleHitComplete;
+        _monsterCombat.OnDeath += HandleDeath;
     }
 
     private void OnDisable()
     {
-        _combat.OnHitComplete -= HandleHitComplete;
-        _combat.OnDeath -= HandleDeath;
+        _monsterCombat.OnHitComplete -= HandleHitComplete;
+        _monsterCombat.OnDeath -= HandleDeath;
     }
 
     private void Start()
@@ -55,7 +69,7 @@ public class Monster : MonoBehaviour
         if (State == EMonsterState.Death) return;
         if (State == EMonsterState.Hit) return;
 
-        _movement.ApplyGravity();
+        _monsterMovement.ApplyGravity();
 
         switch (State)
         {
@@ -64,6 +78,7 @@ public class Monster : MonoBehaviour
             case EMonsterState.Comeback: Comeback(); break;
             case EMonsterState.Attack: Attack(); break;
             case EMonsterState.Patrol: Patrol(); break;
+            case EMonsterState.Jump: Jump(); break;
         }
     }
 
@@ -71,10 +86,8 @@ public class Monster : MonoBehaviour
     {
         if (State == EMonsterState.Death) return false;
 
-        Debug.Log($"Monster took {damage.Value} damage.");
-
-        ChangeState(_stats.Health.Value - damage.Value > 0f ? EMonsterState.Hit : EMonsterState.Death);
-        return _combat.TryTakeDamage(damage);
+        ChangeState(_monsterStat.Health.Value - damage.Value > 0f ? EMonsterState.Hit : EMonsterState.Death);
+        return _monsterCombat.TryTakeDamage(damage);
     }
 
     private void HandleHitComplete()
@@ -91,7 +104,7 @@ public class Monster : MonoBehaviour
     {
         if (_player == null) return;
 
-        if (GetDistanceToPlayer() <= _stats.DetectRange.Value)
+        if (GetDistanceToPlayer() <= _monsterStat.DetectRange.Value)
         {
             ChangeState(EMonsterState.Trace);
         }
@@ -109,35 +122,41 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        _movement.MoveTo(_player.transform.position);
+        _monsterMovement.MoveTo(_player.transform.position);
 
         float distanceToPlayer = GetDistanceToPlayer();
 
-        if (distanceToPlayer > _stats.TraceRange.Value)
+        if (distanceToPlayer > _monsterStat.TraceRange.Value)
         {
             ChangeState(EMonsterState.Comeback);
         }
 
-        if (distanceToPlayer <= _stats.AttackRange.Value)
+        if (distanceToPlayer <= _monsterStat.AttackRange.Value)
         {
             ChangeState(EMonsterState.Attack);
+        }
+
+        if (_navMeshAgent.isOnOffMeshLink)
+        {
+            ChangeState(EMonsterState.Jump);
+            return;
         }
     }
 
     private void Comeback()
     {
-        _movement.MoveTo(_originPosition);
+        _monsterMovement.MoveTo(_originPosition);
 
         float distanceToOrigin = Vector3.Distance(transform.position, _originPosition);
 
-        if (distanceToOrigin <= 1f)
+        if (distanceToOrigin <= ORIGIN_ARRIVAL_THRESHOLD)
         {
             ChangeState(EMonsterState.Idle);
             return;
         }
 
         if (_player == null) return;
-        if (GetDistanceToPlayer() <= _stats.DetectRange.Value)
+        if (GetDistanceToPlayer() <= _monsterStat.DetectRange.Value)
         {
             ChangeState(EMonsterState.Attack);
         }
@@ -151,30 +170,77 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        if (GetDistanceToPlayer() > _stats.AttackRange.Value)
+        if (GetDistanceToPlayer() > _monsterStat.AttackRange.Value)
         {
             ChangeState(EMonsterState.Trace);
             return;
         }
 
         _attackTimer += Time.deltaTime;
-        if (_attackTimer >= _stats.AttackInterval.Value)
+        if (_attackTimer >= _monsterStat.AttackInterval.Value)
         {
             _attackTimer = 0f;
-            Vector3 direction = (_player.transform.position - transform.position).normalized;
-            _combat.PerformAttack(_playerController, direction);
+            Vector3 directionToPlayer = (_player.transform.position - transform.position).normalized;
+            _monsterCombat.PerformAttack(_playerController, directionToPlayer);
         }
     }
 
     private void Patrol()
     {
-        if (_player != null && GetDistanceToPlayer() <= _stats.DetectRange.Value)
+        if (_player != null && GetDistanceToPlayer() <= _monsterStat.DetectRange.Value)
         {
             ChangeState(EMonsterState.Trace);
             return;
         }
 
-        _patrol.UpdatePatrol();
+        _monsterPatrol.UpdatePatrol();
+    }
+
+    private void Jump()
+    {
+        if (_isJumping) return;
+
+        _isJumping = true;
+        _navMeshAgent.isStopped = true;
+
+        OffMeshLinkData linkData = _navMeshAgent.currentOffMeshLinkData;
+        _jumpStartPosition = linkData.startPos;
+        _jumpEndPosition = linkData.endPos;
+
+        StartCoroutine(Jump_Coroutine());
+    }
+
+    private IEnumerator Jump_Coroutine()
+    {
+        _navMeshAgent.CompleteOffMeshLink();
+
+        float elapsed = 0f;
+        Vector3 startPos = _jumpStartPosition;
+        Vector3 endPos = _jumpEndPosition;
+
+        float heightDifference = endPos.y - startPos.y;
+        float actualJumpHeight = _monsterStat.JumpHeight.Value + Mathf.Max(0, heightDifference * JUMP_HEIGHT_OFFSET);
+
+        while (elapsed < _jumpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / _jumpDuration;
+            Vector3 horizontalPos = Vector3.Lerp(startPos, endPos, t);
+
+            float parabola = PARABOLA_MULTIPLIER * t * (1f - t);
+            float verticalOffset = parabola * actualJumpHeight;
+
+            transform.position = horizontalPos + Vector3.up * verticalOffset;
+
+            yield return null;
+        }
+
+        transform.position = endPos;
+
+        _isJumping = false;
+        _navMeshAgent.isStopped = false;
+
+        ChangeState(EMonsterState.Trace);
     }
 
     private void ChangeState(EMonsterState newState)

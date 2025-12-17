@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(Renderer))]
 public class MonsterCombat : MonoBehaviour
@@ -9,7 +10,7 @@ public class MonsterCombat : MonoBehaviour
     public event Action OnDeath;
 
     private MonsterStat _stats;
-    private MonsterMovement _movement;
+    private NavMeshAgent _agent;
     private Renderer _renderer;
 
     private Color _hitColor = Color.red;
@@ -20,7 +21,7 @@ public class MonsterCombat : MonoBehaviour
     {
         _renderer = GetComponent<Renderer>();
         _stats = GetComponent<MonsterStat>();
-        _movement = GetComponent<MonsterMovement>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     private void Start()
@@ -31,6 +32,9 @@ public class MonsterCombat : MonoBehaviour
     public bool TryTakeDamage(Damage damage)
     {
         _stats.Health.Decrease(damage.Value);
+
+        _agent.isStopped = true;
+        _agent.ResetPath();
 
         if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
 
@@ -70,7 +74,6 @@ public class MonsterCombat : MonoBehaviour
             float progress = elapsed / _stats.KnockbackDuration.Value;
             Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
 
-            _movement.ApplyKnockback(velocity);
             yield return null;
         }
 

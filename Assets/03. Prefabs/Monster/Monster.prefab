@@ -488,6 +488,7 @@ GameObject:
   - component: {fileID: 6100739594746278056}
   - component: {fileID: 5587439234146944613}
   - component: {fileID: 8073729568364121759}
+  - component: {fileID: 4843997379615768273}
   m_Layer: 8
   m_Name: Monster
   m_TagString: Monster
@@ -624,21 +625,25 @@ MonoBehaviour:
     _value: 100
     _regenValue: 0
   <MoveSpeed>k__BackingField:
-    _value: 2
+    _value: 3
   <DetectRange>k__BackingField:
-    _value: 15
+    _value: 20
   <TraceRange>k__BackingField:
-    _value: 15
+    _value: 20
   <AttackRange>k__BackingField:
     _value: 2
   <AttackInterval>k__BackingField:
-    _value: 1
+    _value: 0.7
   <AttackDamage>k__BackingField:
     _value: 10
   <KnockbackDuration>k__BackingField:
     _value: 1
   <KnockbackForce>k__BackingField:
     _value: 3
+  <AngularSpeed>k__BackingField:
+    _value: 250
+  <JumpHeight>k__BackingField:
+    _value: 0
 --- !u!114 &6526112923518009748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -697,6 +702,28 @@ MonoBehaviour:
   _hitColor: {r: 1, g: 1, b: 1, a: 0.4392157}
   _shakeDuration: 0.2
   _shakeStrength: 0.15
+--- !u!195 &4843997379615768273
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5440846124522934325}
+  m_Enabled: 1
+  m_AgentTypeID: -1372625422
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 300
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 0
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &5873186491514296591
 GameObject:
   m_ObjectHideFlags: 0

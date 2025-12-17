@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
@@ -17,7 +19,14 @@ public class PlayerMove : MonoBehaviour
 
     private CharacterController _characterController;
     private PlayerStats _stats;
+    private Camera _mainCamera;
     private Transform _cameraTransform;
+
+    [SerializeField] private MoveIndicator _moveIndicator;
+    private NavMeshAgent _navMeshAgent;
+    private RaycastHit _hitInfo = new RaycastHit();
+    private const float INPUT_THRESHOLD = 0.01f;
+    private float _hitDistance = 100f;
 
     private int _jumpCount = 0;
     private float _yVelocity = 0f;
@@ -25,13 +34,18 @@ public class PlayerMove : MonoBehaviour
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<PlayerStats>();
-        _cameraTransform = Camera.main.transform;
+        _mainCamera = Camera.main;
+        _cameraTransform = _mainCamera.transform;
     }
 
     private void Start()
     {
         _stats.MoveSpeed.SetValue(_stats.WalkSpeed.Value);
+
+        _navMeshAgent.updatePosition = false;
+        _navMeshAgent.updateRotation = false;
     }
 
     private void Update()
@@ -39,25 +53,74 @@ public class PlayerMove : MonoBehaviour
         if (GameManager.Instance.State == EGameState.Ready) return;
         if (GameManager.Instance.State == EGameState.GameOver) return;
 
-        Move();
+        ApplyGravity();
+        HandleClickMovement();
         Run();
+
+        Vector3 horizontalVelocity = CalculateHorizontalVelocity();
+        Vector3 finalVelocity = horizontalVelocity + Vector3.up * _yVelocity;
+
+        _characterController.Move(finalVelocity * Time.deltaTime);
+        _navMeshAgent.nextPosition = transform.position;
+
+        TryJump();
     }
 
-    private void Move()
+    private Vector3 CalculateHorizontalVelocity()
     {
-        _yVelocity += _config.Gravity * Time.deltaTime;
-
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 direction = new Vector3(moveX, 0, moveZ);
-        direction.Normalize();
+        bool hasKeyboardInput = Mathf.Abs(moveX) > INPUT_THRESHOLD || Mathf.Abs(moveZ) > INPUT_THRESHOLD;
 
-        direction = _cameraTransform.transform.TransformDirection(direction);
-        direction.y = _yVelocity;
+        if (hasKeyboardInput)
+        {
+            _navMeshAgent.ResetPath();
+            _moveIndicator.Hide();
 
-        _characterController.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
-        TryJump();
+            Vector3 direction = new Vector3(moveX, 0, moveZ).normalized;
+            direction = _cameraTransform.TransformDirection(direction);
+            direction.y = 0f;
+            direction.Normalize();
+
+            return direction * _stats.MoveSpeed.Value;
+        }
+
+        if (_navMeshAgent.hasPath)
+        {
+            return _navMeshAgent.desiredVelocity;
+        }
+
+        return Vector3.zero;
+    }
+
+    private void ApplyGravity()
+    {
+        if (_characterController.isGrounded)
+        {
+            if (_yVelocity < 0f)
+            {
+                _yVelocity = -1f;
+            }
+        }
+        else
+        {
+            _yVelocity += _config.Gravity * Time.deltaTime;
+        }
+    }
+
+    private void HandleClickMovement()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            var ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray.origin, ray.direction, out _hitInfo, _hitDistance))
+            {
+                _navMeshAgent.destination = _hitInfo.point;
+                _moveIndicator.Show(_hitInfo.point);
+            }
+        }
     }
 
     private void TryJump()
@@ -65,7 +128,6 @@ public class PlayerMove : MonoBehaviour
         if (_characterController.isGrounded)
         {
             _jumpCount = 0;
-            if (_yVelocity < 0) _yVelocity = -1f;
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && _jumpCount < _config.MaxJumpCount)
