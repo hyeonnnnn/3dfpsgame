@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
@@ -17,7 +19,12 @@ public class PlayerMove : MonoBehaviour
 
     private CharacterController _characterController;
     private PlayerStats _stats;
+    private Camera _mainCamera;
     private Transform _cameraTransform;
+
+    private NavMeshAgent _navMeshAgent;
+    private RaycastHit _hitInfo = new RaycastHit();
+    [SerializeField] private MoveIndicator _moveIndicator;
 
     private int _jumpCount = 0;
     private float _yVelocity = 0f;
@@ -25,8 +32,10 @@ public class PlayerMove : MonoBehaviour
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<PlayerStats>();
-        _cameraTransform = Camera.main.transform;
+        _mainCamera = Camera.main;
+        _cameraTransform = _mainCamera.transform;
     }
 
     private void Start()
@@ -39,25 +48,62 @@ public class PlayerMove : MonoBehaviour
         if (GameManager.Instance.State == EGameState.Ready) return;
         if (GameManager.Instance.State == EGameState.GameOver) return;
 
-        Move();
+        HandleKeyboardMovement();
+        HandleClickMovement();
         Run();
     }
 
-    private void Move()
+    private void HandleKeyboardMovement()
     {
         _yVelocity += _config.Gravity * Time.deltaTime;
 
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 direction = new Vector3(moveX, 0, moveZ);
-        direction.Normalize();
+        // 키보드로 입력할 때
+        if (Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f) 
+        {
+            _moveIndicator.Hide();
 
-        direction = _cameraTransform.transform.TransformDirection(direction);
-        direction.y = _yVelocity;
+            _navMeshAgent.ResetPath();
+            _navMeshAgent.updatePosition = false;
 
-        _characterController.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
+            Vector3 direction = new Vector3(moveX, 0, moveZ);
+            direction.Normalize();
+
+            direction = _cameraTransform.transform.TransformDirection(direction);
+            direction.y = _yVelocity;
+
+            _characterController.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
+        }
+        // 마우스 클릭으로 이동 중일 때
+        else if (_navMeshAgent.hasPath) 
+        {
+            _navMeshAgent.updatePosition = true;
+            _navMeshAgent.nextPosition = transform.position;
+        }
+        // 정지 상태일 때
+        else
+        {
+            Vector3 gravityMove = new Vector3(0, _yVelocity, 0);
+            _characterController.Move(gravityMove * Time.deltaTime);
+        }
+
         TryJump();
+    }
+
+    private void HandleClickMovement()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            var ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray.origin, ray.direction, out _hitInfo))
+            {
+                _navMeshAgent.destination = _hitInfo.point;
+                _moveIndicator.Show(_hitInfo.point);
+            }
+        }
     }
 
     private void TryJump()

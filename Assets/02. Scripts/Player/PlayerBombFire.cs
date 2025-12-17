@@ -47,7 +47,7 @@ public class PlayerBombFire : MonoBehaviour
         if (GameManager.Instance.State == EGameState.Ready) return;
         if (GameManager.Instance.State == EGameState.GameOver) return;
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             if (_bombCount <= 0) return;
             Fire();
