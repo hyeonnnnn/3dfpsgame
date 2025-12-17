@@ -200,47 +200,45 @@ public class Monster : MonoBehaviour
     {
         if (_isJumping) return;
 
+        _isJumping = true;
         _navMeshAgent.isStopped = true;
+
+        OffMeshLinkData linkData = _navMeshAgent.currentOffMeshLinkData;
+        _jumpStartPosition = linkData.startPos;
+        _jumpEndPosition = linkData.endPos;
+
         StartCoroutine(Jump_Coroutine());
     }
 
     private IEnumerator Jump_Coroutine()
     {
-        _isJumping = true;
+        _navMeshAgent.CompleteOffMeshLink();
 
-        OffMeshLinkData data = _navMeshAgent.currentOffMeshLinkData;
-        Vector3 startPosition = _navMeshAgent.transform.position;
-        Vector3 endPosition = data.endPos + Vector3.up * _navMeshAgent.baseOffset;
+        float elapsed = 0f;
+        Vector3 startPos = _jumpStartPosition;
+        Vector3 endPos = _jumpEndPosition;
 
-        float heightDifference = endPosition.y - startPosition.y;
-        bool isDescending = heightDifference < 0;
+        float heightDifference = endPos.y - startPos.y;
+        float actualJumpHeight = _monsterStat.JumpHeight.Value + Mathf.Max(0, heightDifference * 0.5f);
 
-        float jumpHeight = isDescending
-            ? Mathf.Max(0.5f, Mathf.Abs(heightDifference) * 0.3f)
-            : _monsterStat.JumpHeight.Value;
-
-        float normalizedTime = 0f;
-        while (normalizedTime < 1f)
+        while (elapsed < _jumpDuration)
         {
-            float offsetY;
-            if (isDescending)
-            {
-                offsetY = jumpHeight * Mathf.Sin(normalizedTime * Mathf.PI) * (1f - normalizedTime);
-            }
-            else
-            {
-                offsetY = jumpHeight * 4f * (normalizedTime - normalizedTime * normalizedTime);
-            }
+            elapsed += Time.deltaTime;
+            float t = elapsed / _jumpDuration;
+            Vector3 horizontalPos = Vector3.Lerp(startPos, endPos, t);
 
-            _navMeshAgent.transform.position = Vector3.Lerp(startPosition, endPosition, normalizedTime) + Vector3.up * offsetY;
-            normalizedTime += Time.deltaTime / _jumpDuration;
+            float parabola = 4f * t * (1f - t);
+            float verticalOffset = parabola * actualJumpHeight;
+
+            transform.position = horizontalPos + Vector3.up * verticalOffset;
+
             yield return null;
         }
 
-        _navMeshAgent.transform.position = endPosition;
-        _navMeshAgent.CompleteOffMeshLink();
-        _navMeshAgent.isStopped = false;
+        transform.position = endPos;
+
         _isJumping = false;
+        _navMeshAgent.isStopped = false;
 
         ChangeState(EMonsterState.Trace);
     }

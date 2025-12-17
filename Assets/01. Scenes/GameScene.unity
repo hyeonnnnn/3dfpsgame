@@ -1201,7 +1201,7 @@ Transform:
   m_GameObject: {fileID: 315838292}
   serializedVersion: 2
   m_LocalRotation: {x: -0.16607173, y: 0, z: 0, w: 0.98611367}
-  m_LocalPosition: {x: 55.67, y: -0.17, z: 31.09}
+  m_LocalPosition: {x: 43.539997, y: -0.17, z: 15.01}
   m_LocalScale: {x: 9.629208, y: 2.417045, z: 20.034071}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2849,7 +2849,7 @@ MonoBehaviour:
   <WalkSpeed>k__BackingField:
     _value: 2
   <JumpForce>k__BackingField:
-    _value: 5
+    _value: 10
   <Damage>k__BackingField:
     _value: 10
 --- !u!114 &871459799
@@ -3216,7 +3216,7 @@ Transform:
   m_GameObject: {fileID: 885272171}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 48.7401, y: 2.1469, z: 53.9087}
+  m_LocalPosition: {x: 36.6101, y: 2.1469, z: 37.828697}
   m_LocalScale: {x: 24.48, y: 4.249354, z: 28.217001}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3310,8 +3310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SerializedVersion: 1
   m_AgentTypeID: -1372625422
-  m_StartPoint: {x: -16, y: -2.22, z: 0}
-  m_EndPoint: {x: -11.74, y: 2.09, z: 0}
+  m_StartPoint: {x: -14, y: -2.12, z: 0}
+  m_EndPoint: {x: -11.4, y: 2.38, z: 0}
   m_StartTransform: {fileID: 0}
   m_EndTransform: {fileID: 0}
   m_Activated: 1
@@ -7172,7 +7172,7 @@ Transform:
   m_GameObject: {fileID: 1990401248}
   serializedVersion: 2
   m_LocalRotation: {x: -0.16606814, y: -0, z: -0, w: 0.9861143}
-  m_LocalPosition: {x: 41.58, y: -0.17, z: 31.09}
+  m_LocalPosition: {x: 29.45, y: -0.17, z: 15.01}
   m_LocalScale: {x: 9.629208, y: 2.417045, z: 20.034071}
   m_ConstrainProportionsScale: 0
   m_Children: []

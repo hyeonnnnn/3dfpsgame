@@ -55,13 +55,13 @@ public class PlayerMove : MonoBehaviour
 
     private void HandleKeyboardMovement()
     {
-        _yVelocity += _config.Gravity * Time.deltaTime;
+        ApplyGravity();
 
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
         // 키보드로 입력할 때
-        if (Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f) 
+        if (Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f)
         {
             _moveIndicator.Hide();
 
@@ -72,24 +72,43 @@ public class PlayerMove : MonoBehaviour
             direction.Normalize();
 
             direction = _cameraTransform.transform.TransformDirection(direction);
-            direction.y = _yVelocity;
+            direction.y = 0f;
 
-            _characterController.Move(direction * _stats.MoveSpeed.Value * Time.deltaTime);
+            Vector3 move = direction * _stats.MoveSpeed.Value + Vector3.up * _yVelocity;
+            _characterController.Move(move * Time.deltaTime);
         }
         // 마우스 클릭으로 이동 중일 때
-        else if (_navMeshAgent.hasPath) 
+        else if (_navMeshAgent.hasPath)
         {
             _navMeshAgent.updatePosition = true;
             _navMeshAgent.nextPosition = transform.position;
+
+            Vector3 gravityMove = Vector3.up * _yVelocity;
+            _characterController.Move(gravityMove * Time.deltaTime);
         }
         // 정지 상태일 때
         else
         {
-            Vector3 gravityMove = new Vector3(0, _yVelocity, 0);
+            Vector3 gravityMove = Vector3.up * _yVelocity;
             _characterController.Move(gravityMove * Time.deltaTime);
         }
 
         TryJump();
+    }
+
+    private void ApplyGravity()
+    {
+        if (_characterController.isGrounded)
+        {
+            if (_yVelocity < 0f)
+            {
+                _yVelocity = -1f;
+            }
+        }
+        else
+        {
+            _yVelocity += _config.Gravity * Time.deltaTime;
+        }
     }
 
     private void HandleClickMovement()
@@ -111,7 +130,6 @@ public class PlayerMove : MonoBehaviour
         if (_characterController.isGrounded)
         {
             _jumpCount = 0;
-            if (_yVelocity < 0) _yVelocity = -1f;
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && _jumpCount < _config.MaxJumpCount)
