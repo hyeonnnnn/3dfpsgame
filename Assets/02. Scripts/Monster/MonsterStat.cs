@@ -12,6 +12,7 @@ public class MonsterStat : MonoBehaviour
     [field: SerializeField] public ValueStat KnockbackDuration { get; private set; }
     [field: SerializeField] public ValueStat KnockbackForce { get; private set; }
     [field: SerializeField] public ValueStat AngularSpeed { get; private set; }
+    [field: SerializeField] public ValueStat JumpHeight { get; private set; }
 
     private void Start()
     {

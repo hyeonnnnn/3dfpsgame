@@ -7767,10 +7767,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 38236178}
     m_Modifications:
-    - target: {fileID: 4843997379615768273, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
-      propertyPath: m_AutoTraverseOffMeshLink
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5440846124522934325, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_Name
       value: Monster

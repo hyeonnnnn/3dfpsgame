@@ -26,6 +26,7 @@ public class Monster : MonoBehaviour
     private Vector3 _jumpStartPosition;
     private Vector3 _jumpEndPosition;
     private bool _isJumping = false;
+    private float _jumpDuration = 0.5f;
 
     private void Awake()
     {
@@ -137,15 +138,8 @@ public class Monster : MonoBehaviour
 
         if (_navMeshAgent.isOnOffMeshLink)
         {
-            OffMeshLinkData linkData = _navMeshAgent.currentOffMeshLinkData;
-            _jumpStartPosition = linkData.startPos;
-            _jumpEndPosition = linkData.endPos;
-
-            if (_jumpEndPosition.y > _jumpStartPosition.y)
-            {
-                ChangeState(EMonsterState.Jump);
-                return;
-            }
+            ChangeState(EMonsterState.Jump);
+            return;
         }
     }
 
@@ -207,34 +201,43 @@ public class Monster : MonoBehaviour
         if (_isJumping) return;
 
         _navMeshAgent.isStopped = true;
-        StartCoroutine(JumpCoroutine());
+        StartCoroutine(Jump_Coroutine());
     }
 
-    private IEnumerator JumpCoroutine()
+    private IEnumerator Jump_Coroutine()
     {
         _isJumping = true;
 
-        float jumpDistance = Vector3.Distance(_jumpStartPosition, _jumpEndPosition);
-        float jumpDuration = jumpDistance / _monsterStat.MoveSpeed.Value;
-        float heightDifference = _jumpEndPosition.y - _jumpStartPosition.y;
-        float jumpHeight = Mathf.Max(MIN_JUMP_HEIGHT, heightDifference + JUMP_HEIGHT_OFFSET);
+        OffMeshLinkData data = _navMeshAgent.currentOffMeshLinkData;
+        Vector3 startPosition = _navMeshAgent.transform.position;
+        Vector3 endPosition = data.endPos + Vector3.up * _navMeshAgent.baseOffset;
 
-        float elapsedTime = 0f;
+        float heightDifference = endPosition.y - startPosition.y;
+        bool isDescending = heightDifference < 0;
 
-        while (elapsedTime < jumpDuration)
+        float jumpHeight = isDescending
+            ? Mathf.Max(0.5f, Mathf.Abs(heightDifference) * 0.3f)
+            : _monsterStat.JumpHeight.Value;
+
+        float normalizedTime = 0f;
+        while (normalizedTime < 1f)
         {
-            elapsedTime += Time.deltaTime;
-            float normalizedTime = elapsedTime / jumpDuration;
+            float offsetY;
+            if (isDescending)
+            {
+                offsetY = jumpHeight * Mathf.Sin(normalizedTime * Mathf.PI) * (1f - normalizedTime);
+            }
+            else
+            {
+                offsetY = jumpHeight * 4f * (normalizedTime - normalizedTime * normalizedTime);
+            }
 
-            Vector3 horizontalPosition = Vector3.Lerp(_jumpStartPosition, _jumpEndPosition, normalizedTime);
-            float baseY = Mathf.Lerp(_jumpStartPosition.y, _jumpEndPosition.y, normalizedTime);
-            float yOffset = jumpHeight * PARABOLA_MULTIPLIER * normalizedTime * (1f - normalizedTime);
-            transform.position = new Vector3(horizontalPosition.x, baseY + yOffset, horizontalPosition.z);
-
+            _navMeshAgent.transform.position = Vector3.Lerp(startPosition, endPosition, normalizedTime) + Vector3.up * offsetY;
+            normalizedTime += Time.deltaTime / _jumpDuration;
             yield return null;
         }
 
-        transform.position = _jumpEndPosition;
+        _navMeshAgent.transform.position = endPosition;
         _navMeshAgent.CompleteOffMeshLink();
         _navMeshAgent.isStopped = false;
         _isJumping = false;
