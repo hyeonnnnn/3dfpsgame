@@ -11,17 +11,23 @@ public class MonsterCombat : MonoBehaviour
 
     private MonsterStat _stats;
     private NavMeshAgent _agent;
-    private Renderer _renderer;
-
+    
+    [SerializeField] private Renderer _renderer;
     private Color _hitColor = Color.red;
     private Color _originalColor;
     private Coroutine _currentCoroutine;
 
+    [SerializeField] private Animator _animator;
+
     private void Awake()
     {
-        _renderer = GetComponent<Renderer>();
         _stats = GetComponent<MonsterStat>();
         _agent = GetComponent<NavMeshAgent>();
+
+        if (_animator == null)
+        {
+            _animator = GetComponentInChildren<Animator>();
+        }
     }
 
     private void Start()
@@ -45,7 +51,8 @@ public class MonsterCombat : MonoBehaviour
         }
         else
         {
-            _currentCoroutine = StartCoroutine(Death_Coroutine());
+            _animator.SetTrigger("Die");
+            OnDeath?.Invoke();
             return true;
         }
     }
@@ -54,8 +61,9 @@ public class MonsterCombat : MonoBehaviour
     {
         if (playerController != null)
         {
-            Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
-            playerController.TakeDamage(damage);
+            _animator.SetTrigger("Attack");
+            // Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
+            // playerController.TakeDamage(damage);
         }
     }
 
@@ -82,12 +90,5 @@ public class MonsterCombat : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         _currentCoroutine = null;
         OnHitComplete?.Invoke();
-    }
-
-    private IEnumerator Death_Coroutine()
-    {
-        OnDeath?.Invoke();
-        yield return new WaitForSeconds(0.2f);
-        Destroy(gameObject);
     }
 }

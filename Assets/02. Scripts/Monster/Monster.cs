@@ -252,4 +252,15 @@ public class Monster : MonoBehaviour
     {
         return Vector3.Distance(transform.position, _player.transform.position);
     }
+
+    public PlayerController GetPlayerController()
+    {
+        return _playerController;
+    }
+
+    public Vector3 GetDirectionToPlayer()
+    {
+        if (_player == null) return Vector3.zero;
+        return (_player.transform.position - transform.position).normalized;
+    }
 }
