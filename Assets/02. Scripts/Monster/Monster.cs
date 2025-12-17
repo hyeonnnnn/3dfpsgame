@@ -5,14 +5,13 @@ using System.Collections;
 public class Monster : MonoBehaviour
 {
     private const float ORIGIN_ARRIVAL_THRESHOLD = 1f;
-    private const float MIN_JUMP_HEIGHT = 1.5f;
     private const float JUMP_HEIGHT_OFFSET = 0.5f;
     private const float PARABOLA_MULTIPLIER = 4f;
 
     public EMonsterState State = EMonsterState.Idle;
 
     private MonsterStat _monsterStat;
-    private MonsterMovement _monsterMovement;
+    private MonsterMove _monsterMovement;
     private MonsterCombat _monsterCombat;
     private MonsterPatrol _monsterPatrol;
 
@@ -28,10 +27,11 @@ public class Monster : MonoBehaviour
     private bool _isJumping = false;
     private float _jumpDuration = 0.5f;
 
+
     private void Awake()
     {
         _monsterStat = GetComponent<MonsterStat>();
-        _monsterMovement = GetComponent<MonsterMovement>();
+        _monsterMovement = GetComponent<MonsterMove>();
         _monsterCombat = GetComponent<MonsterCombat>();
         _monsterPatrol = GetComponent<MonsterPatrol>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -69,7 +69,7 @@ public class Monster : MonoBehaviour
         if (State == EMonsterState.Death) return;
         if (State == EMonsterState.Hit) return;
 
-        //_movement.ApplyGravity();
+        _monsterMovement.ApplyGravity();
 
         switch (State)
         {
@@ -219,7 +219,7 @@ public class Monster : MonoBehaviour
         Vector3 endPos = _jumpEndPosition;
 
         float heightDifference = endPos.y - startPos.y;
-        float actualJumpHeight = _monsterStat.JumpHeight.Value + Mathf.Max(0, heightDifference * 0.5f);
+        float actualJumpHeight = _monsterStat.JumpHeight.Value + Mathf.Max(0, heightDifference * JUMP_HEIGHT_OFFSET);
 
         while (elapsed < _jumpDuration)
         {
@@ -227,7 +227,7 @@ public class Monster : MonoBehaviour
             float t = elapsed / _jumpDuration;
             Vector3 horizontalPos = Vector3.Lerp(startPos, endPos, t);
 
-            float parabola = 4f * t * (1f - t);
+            float parabola = PARABOLA_MULTIPLIER * t * (1f - t);
             float verticalOffset = parabola * actualJumpHeight;
 
             transform.position = horizontalPos + Vector3.up * verticalOffset;

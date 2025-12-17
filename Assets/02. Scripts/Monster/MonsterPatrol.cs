@@ -15,7 +15,7 @@ public class MonsterPatrol : MonoBehaviour
     [SerializeField] private float _patrolMinInterval = 2f;
     [SerializeField] private float _turnDuration = 0.4f;
 
-    private MonsterMovement _movement;
+    private MonsterMove _movement;
 
     private float _patrolInterval;
     private float _patrolTimer = 0f;
@@ -23,7 +23,7 @@ public class MonsterPatrol : MonoBehaviour
 
     private void Awake()
     {
-        _movement = GetComponent<MonsterMovement>();
+        _movement = GetComponent<MonsterMove>();
     }
 
     public void UpdatePatrol()

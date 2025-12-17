@@ -22,9 +22,11 @@ public class PlayerMove : MonoBehaviour
     private Camera _mainCamera;
     private Transform _cameraTransform;
 
+    [SerializeField] private MoveIndicator _moveIndicator;
     private NavMeshAgent _navMeshAgent;
     private RaycastHit _hitInfo = new RaycastHit();
-    [SerializeField] private MoveIndicator _moveIndicator;
+    private const float INPUT_THRESHOLD = 0.01f;
+    private float _hitDistance = 100f;
 
     private int _jumpCount = 0;
     private float _yVelocity = 0f;
@@ -41,6 +43,9 @@ public class PlayerMove : MonoBehaviour
     private void Start()
     {
         _stats.MoveSpeed.SetValue(_stats.WalkSpeed.Value);
+
+        _navMeshAgent.updatePosition = false;
+        _navMeshAgent.updateRotation = false;
     }
 
     private void Update()
@@ -48,52 +53,45 @@ public class PlayerMove : MonoBehaviour
         if (GameManager.Instance.State == EGameState.Ready) return;
         if (GameManager.Instance.State == EGameState.GameOver) return;
 
-        HandleKeyboardMovement();
+        ApplyGravity();
         HandleClickMovement();
         Run();
+
+        Vector3 horizontalVelocity = CalculateHorizontalVelocity();
+        Vector3 finalVelocity = horizontalVelocity + Vector3.up * _yVelocity;
+
+        _characterController.Move(finalVelocity * Time.deltaTime);
+        _navMeshAgent.nextPosition = transform.position;
+
+        TryJump();
     }
 
-    private void HandleKeyboardMovement()
+    private Vector3 CalculateHorizontalVelocity()
     {
-        ApplyGravity();
-
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        // 키보드로 입력할 때
-        if (Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f)
+        bool hasKeyboardInput = Mathf.Abs(moveX) > INPUT_THRESHOLD || Mathf.Abs(moveZ) > INPUT_THRESHOLD;
+
+        if (hasKeyboardInput)
         {
+            _navMeshAgent.ResetPath();
             _moveIndicator.Hide();
 
-            _navMeshAgent.ResetPath();
-            _navMeshAgent.updatePosition = false;
-
-            Vector3 direction = new Vector3(moveX, 0, moveZ);
+            Vector3 direction = new Vector3(moveX, 0, moveZ).normalized;
+            direction = _cameraTransform.TransformDirection(direction);
+            direction.y = 0f;
             direction.Normalize();
 
-            direction = _cameraTransform.transform.TransformDirection(direction);
-            direction.y = 0f;
-
-            Vector3 move = direction * _stats.MoveSpeed.Value + Vector3.up * _yVelocity;
-            _characterController.Move(move * Time.deltaTime);
+            return direction * _stats.MoveSpeed.Value;
         }
-        // 마우스 클릭으로 이동 중일 때
-        else if (_navMeshAgent.hasPath)
+
+        if (_navMeshAgent.hasPath)
         {
-            _navMeshAgent.updatePosition = true;
-            _navMeshAgent.nextPosition = transform.position;
-
-            Vector3 gravityMove = Vector3.up * _yVelocity;
-            _characterController.Move(gravityMove * Time.deltaTime);
-        }
-        // 정지 상태일 때
-        else
-        {
-            Vector3 gravityMove = Vector3.up * _yVelocity;
-            _characterController.Move(gravityMove * Time.deltaTime);
+            return _navMeshAgent.desiredVelocity;
         }
 
-        TryJump();
+        return Vector3.zero;
     }
 
     private void ApplyGravity()
@@ -117,7 +115,7 @@ public class PlayerMove : MonoBehaviour
         {
             var ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray.origin, ray.direction, out _hitInfo))
+            if (Physics.Raycast(ray.origin, ray.direction, out _hitInfo, _hitDistance))
             {
                 _navMeshAgent.destination = _hitInfo.point;
                 _moveIndicator.Show(_hitInfo.point);

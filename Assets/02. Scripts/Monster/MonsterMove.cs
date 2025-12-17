@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(MonsterStat))]
-public class MonsterMovement : MonoBehaviour
+public class MonsterMove : MonoBehaviour
 {
     private NavMeshAgent _agent;
     private MonsterStat _stats;
+    private CharacterController _characterController;
 
     private float _gravity = -9.81f;
     private float _yVelocity = 0f;
@@ -17,6 +18,7 @@ public class MonsterMovement : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<MonsterStat>();
+        _characterController = GetComponent<CharacterController>();
     }
 
     private void Start()
@@ -34,5 +36,20 @@ public class MonsterMovement : MonoBehaviour
     {
         Vector3 destination = transform.position + transform.forward * _stats.MoveSpeed.Value;
         _agent.SetDestination(destination);
+    }
+
+    public void ApplyGravity()
+    {
+        if (_characterController.isGrounded)
+        {
+            if (_yVelocity < 0f)
+            {
+                _yVelocity = -1f;
+            }
+        }
+        else
+        {
+            _yVelocity += _gravity * Time.deltaTime;
+        }
     }
 }
