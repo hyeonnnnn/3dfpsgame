@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -5,6 +7,11 @@ public class PlayerGunFire : MonoBehaviour
 {
     [SerializeField] private Transform _fireTransform;
     [SerializeField] private ParticleSystem _hitEffect;
+
+    [SerializeField] private List<GameObject> _muzzleEffect;
+
+    [SerializeField] private GameObject _muzzleFlashPrefab;
+    [SerializeField] private Transform _muzzlePoint;
 
     [SerializeField] private float _fireCoolTime = 0.3f;
     private float _fireTimer = 0f;
@@ -60,7 +67,6 @@ public class PlayerGunFire : MonoBehaviour
         Ray ray = new Ray(_fireTransform.position, _mainCamera.transform.forward);
         RaycastHit hitInfo = new RaycastHit();
         Fire(ray, hitInfo);
-        _animator.ResetTrigger("Shoot");
 
         _fireTimer = 0f;
     }
@@ -93,5 +99,22 @@ public class PlayerGunFire : MonoBehaviour
         _ammoController.ConsumeMagazine();
         _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
         _crosshair.Expand();
+        SpawnMuzzleFlash();
+    }
+
+    private void SpawnMuzzleFlash()
+    {
+        if (_muzzleFlashPrefab == null) return;
+        if (_muzzlePoint == null) return;
+
+        StartCoroutine(MuzzleFlash_Coroutine());
+    }
+
+    private IEnumerator MuzzleFlash_Coroutine()
+    {
+        GameObject muzzleEffect = _muzzleEffect[Random.Range(0, _muzzleEffect.Count)];
+        muzzleEffect.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        muzzleEffect.SetActive(false);
     }
 }
