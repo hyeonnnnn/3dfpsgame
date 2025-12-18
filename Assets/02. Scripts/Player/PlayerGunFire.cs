@@ -21,10 +21,13 @@ public class PlayerGunFire : MonoBehaviour
     private PlayerStats _stats;
     [SerializeField] private float _knockbackForce = 4f;
 
+    private Animator _animator;
+
     private void Awake()
     {
         _ammoController = GetComponent<AmmoController>();
         _stats = GetComponent<PlayerStats>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -53,9 +56,11 @@ public class PlayerGunFire : MonoBehaviour
         if (_ammoController.IsReloading) return;
         if (_ammoController.HasAmmunition() == false) return;
 
+        _animator.SetTrigger("Shoot");
         Ray ray = new Ray(_fireTransform.position, _mainCamera.transform.forward);
         RaycastHit hitInfo = new RaycastHit();
         Fire(ray, hitInfo);
+        _animator.ResetTrigger("Shoot");
 
         _fireTimer = 0f;
     }

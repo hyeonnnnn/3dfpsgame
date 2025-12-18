@@ -18,6 +18,7 @@ public class PlayerMove : MonoBehaviour
     public MoveConfig _config;
 
     private CharacterController _characterController;
+    private Animator _animator;
     private PlayerStats _stats;
     private Camera _mainCamera;
     private Transform _cameraTransform;
@@ -36,6 +37,8 @@ public class PlayerMove : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<PlayerStats>();
+        _animator = GetComponentInChildren<Animator>();
+
         _mainCamera = Camera.main;
         _cameraTransform = _mainCamera.transform;
     }
@@ -78,7 +81,10 @@ public class PlayerMove : MonoBehaviour
             _navMeshAgent.ResetPath();
             _moveIndicator.Hide();
 
-            Vector3 direction = new Vector3(moveX, 0, moveZ).normalized;
+            Vector3 direction = new Vector3(moveX, 0, moveZ);
+            _animator.SetFloat("Speed", direction.magnitude);
+            direction.Normalize();
+
             direction = _cameraTransform.TransformDirection(direction);
             direction.y = 0f;
             direction.Normalize();

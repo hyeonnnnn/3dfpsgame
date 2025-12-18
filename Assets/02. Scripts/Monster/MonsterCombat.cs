@@ -6,18 +6,18 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Renderer))]
 public class MonsterCombat : MonoBehaviour
 {
+    private const float HIT_RECOVERY_TIME = 1.667f;
+
     public event Action OnHitComplete;
     public event Action OnDeath;
 
     private MonsterStat _stats;
     private NavMeshAgent _agent;
-    
-    [SerializeField] private Renderer _renderer;
-    private Color _hitColor = Color.red;
-    private Color _originalColor;
-    private Coroutine _currentCoroutine;
 
+    [SerializeField] private Renderer _renderer;
     [SerializeField] private Animator _animator;
+
+    private Coroutine _hitRecoveryCoroutine;
 
     private void Awake()
     {
@@ -30,31 +30,50 @@ public class MonsterCombat : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        _originalColor = _renderer.material.color;
-    }
-
     public bool TryTakeDamage(Damage damage)
     {
         _stats.Health.Decrease(damage.Value);
 
-        _agent.isStopped = true;
-        _agent.ResetPath();
-
-        if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
-
         if (_stats.Health.Value > 0f)
         {
-            _currentCoroutine = StartCoroutine(Hit_Coroutine(damage.Direction, damage.KnockbackForce));
+            ProcessHit();
             return true;
         }
         else
         {
-            _animator.SetTrigger("Die");
-            OnDeath?.Invoke();
+            ProcessDeath();
             return true;
         }
+    }
+
+    private void ProcessHit()
+    {
+        _agent.isStopped = true;
+        _agent.ResetPath();
+        _animator.SetTrigger("Hit");
+
+        if (_hitRecoveryCoroutine != null)
+        {
+            StopCoroutine(_hitRecoveryCoroutine);
+        }
+        _hitRecoveryCoroutine = StartCoroutine(HitRecovery_Coroutine());
+    }
+
+    private IEnumerator HitRecovery_Coroutine()
+    {
+        yield return new WaitForSeconds(HIT_RECOVERY_TIME);
+
+        _agent.isStopped = false;
+        _hitRecoveryCoroutine = null;
+        OnHitComplete?.Invoke();
+    }
+
+    private void ProcessDeath()
+    {
+        _agent.isStopped = true;
+        _agent.ResetPath();
+        _animator.SetTrigger("Death");
+        OnDeath?.Invoke();
     }
 
     public void PerformAttack(PlayerController playerController, Vector3 direction)
@@ -62,33 +81,6 @@ public class MonsterCombat : MonoBehaviour
         if (playerController != null)
         {
             _animator.SetTrigger("Attack");
-            // Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
-            // playerController.TakeDamage(damage);
         }
-    }
-
-    private IEnumerator Hit_Coroutine(Vector3 direction, float knockbackForce)
-    {
-        float elapsed = 0f;
-        direction.y = 0f;
-        direction.Normalize();
-        Vector3 knockbackVelocity = direction * knockbackForce;
-
-        _renderer.material.color = _hitColor;
-
-        while (elapsed < _stats.KnockbackDuration.Value)
-        {
-            elapsed += Time.deltaTime;
-            float progress = elapsed / _stats.KnockbackDuration.Value;
-            Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
-
-            yield return null;
-        }
-
-        _renderer.material.color = _originalColor;
-
-        yield return new WaitForSeconds(0.1f);
-        _currentCoroutine = null;
-        OnHitComplete?.Invoke();
     }
 }

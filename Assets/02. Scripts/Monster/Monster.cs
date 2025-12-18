@@ -14,6 +14,7 @@ public class Monster : MonoBehaviour
     private MonsterMove _monsterMovement;
     private MonsterCombat _monsterCombat;
     private MonsterPatrol _monsterPatrol;
+    private Animator _animator;
 
     private GameObject _player;
     private PlayerController _playerController;
@@ -35,6 +36,7 @@ public class Monster : MonoBehaviour
         _monsterCombat = GetComponent<MonsterCombat>();
         _monsterPatrol = GetComponent<MonsterPatrol>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void OnEnable()
@@ -82,17 +84,18 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public bool TryTakeDamage(Damage damage)
+    public void TryTakeDamage(Damage damage)
     {
-        if (State == EMonsterState.Death) return false;
+        if (State == EMonsterState.Death) return;
 
-        ChangeState(_monsterStat.Health.Value - damage.Value > 0f ? EMonsterState.Hit : EMonsterState.Death);
-        return _monsterCombat.TryTakeDamage(damage);
+        bool isAlive = _monsterStat.Health.Value - damage.Value > 0f;
+        ChangeState(isAlive ? EMonsterState.Hit : EMonsterState.Death);
+        _monsterCombat.TryTakeDamage(damage);
     }
 
     private void HandleHitComplete()
     {
-        ChangeState(EMonsterState.Trace);
+        ChangeState(EMonsterState.Idle);
     }
 
     private void HandleDeath()
@@ -245,7 +248,35 @@ public class Monster : MonoBehaviour
 
     private void ChangeState(EMonsterState newState)
     {
+        if (State == newState) return;
+
         State = newState;
+
+        switch (newState)
+        {
+            case EMonsterState.Idle:
+                _animator.SetTrigger("Idle");
+                break;
+            case EMonsterState.Trace:
+                _animator.SetTrigger("Run");
+                break;
+            case EMonsterState.Comeback:
+                _animator.SetTrigger("Walk");
+                break;
+            case EMonsterState.Patrol:
+                _animator.SetTrigger("Walk");
+                break;
+            case EMonsterState.Attack:
+                _animator.SetTrigger("Attack");
+                break;
+            case EMonsterState.Jump:
+                _animator.SetTrigger("Jump");
+                break;
+            case EMonsterState.Hit:
+                break;
+            case EMonsterState.Death:
+                break;
+        }
     }
 
     private float GetDistanceToPlayer()
