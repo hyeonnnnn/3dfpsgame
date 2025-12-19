@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(Renderer))]
-public class MonsterCombat : MonoBehaviour
+public class MonsterCombat : MonoBehaviour, IDamageable
 {
     private const float HIT_RECOVERY_TIME = 1.38f;
 
@@ -17,6 +18,9 @@ public class MonsterCombat : MonoBehaviour
     [SerializeField] private Renderer _renderer;
     [SerializeField] private Animator _animator;
 
+    [SerializeField] private GameObject _bloodEffectPrefab;
+
+    private List<GameObject> _spawnedEffects = new List<GameObject>();
     private Coroutine _hitRecoveryCoroutine;
 
     private void Awake()
@@ -33,10 +37,11 @@ public class MonsterCombat : MonoBehaviour
     public bool TryTakeDamage(Damage damage)
     {
         _stats.Health.Decrease(damage.Value);
+        _bloodEffectPrefab .transform.forward = damage.Nomral;
 
         if (_stats.Health.Value > 0f)
         {
-            ProcessHit();
+            ProcessHit(damage);
             return true;
         }
         else
@@ -46,11 +51,14 @@ public class MonsterCombat : MonoBehaviour
         }
     }
 
-    private void ProcessHit()
+    private void ProcessHit(Damage damage)
     {
         _agent.isStopped = true;
         _agent.ResetPath();
         _animator.SetTrigger("Hit");
+
+        GameObject effect = Instantiate(_bloodEffectPrefab, damage.HitPoint, Quaternion.identity, transform);
+        _spawnedEffects.Add(effect);
 
         if (_hitRecoveryCoroutine != null)
         {
@@ -70,9 +78,20 @@ public class MonsterCombat : MonoBehaviour
 
     private void ProcessDeath()
     {
+        foreach (GameObject effect in _spawnedEffects)
+        {
+            if (effect != null)
+            {
+                effect.SetActive(false);
+            }
+        }
+
         _agent.isStopped = true;
         _agent.ResetPath();
         _animator.SetTrigger("Death");
+
+        _spawnedEffects.Clear();
+
         OnDeath?.Invoke();
     }
 

@@ -14,7 +14,8 @@ public class MonsterAnimationEvent : MonoBehaviour
         if (playerController == null) return;
 
         Vector3 direction = _monster.GetDirectionToPlayer();
-        Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
+        Vector3 hitPoint = playerController.transform.position;
+        Damage damage = new Damage(_stats.AttackDamage.Value, direction, hitPoint, _stats.KnockbackForce.Value, Vector3.up);
         playerController.TakeDamage(damage);
     }
 

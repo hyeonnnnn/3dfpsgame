@@ -100,18 +100,12 @@ public class PlayerGunFire : MonoBehaviour
             _hitEffect.transform.forward = hitInfo.normal;
             _hitEffect.Play();
 
-            Monster monster = hitInfo.transform.GetComponent<Monster>();
-            if (monster != null)
+            IDamageable damageable = hitInfo.transform.GetComponent<IDamageable>();
+            if (damageable != null)
             {
                 Vector3 direction = (hitInfo.transform.position - _fireTransform.position).normalized;
-                Damage damage = new Damage(_stats.Damage.Value, direction, _knockbackForce);
-                monster.TryTakeDamage(damage);
-            }
-
-            Barrel barrel = hitInfo.transform.GetComponent<Barrel>();
-            if (barrel != null)
-            {
-                barrel.TakeDamage(_stats.Damage.Value);
+                Damage damage = new Damage(_stats.Damage.Value, direction, hitInfo.point, _knockbackForce, hitInfo.normal);
+                damageable.TryTakeDamage(damage);
             }
         }
         else

@@ -617,6 +617,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1952046563}
     m_Modifications:
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explosionEffect
+      value: 
+      objectReference: {fileID: 2008225836}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._maxValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._regenValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explodeDamage._value
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7464778339797912727, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
       propertyPath: m_Name
       value: Barrel (1)
@@ -1135,7 +1155,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5440846124522934325, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081372060599876905, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2271,6 +2291,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1952046563}
     m_Modifications:
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explosionEffect
+      value: 
+      objectReference: {fileID: 2008225836}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._maxValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._regenValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explodeDamage._value
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7464778339797912727, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
       propertyPath: m_Name
       value: Barrel (5)
@@ -3532,6 +3572,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1952046563}
     m_Modifications:
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explosionEffect
+      value: 
+      objectReference: {fileID: 2008225836}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._maxValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._regenValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explodeDamage._value
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7464778339797912727, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
       propertyPath: m_Name
       value: Barrel (3)
@@ -3594,6 +3654,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1952046563}
     m_Modifications:
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explosionEffect
+      value: 
+      objectReference: {fileID: 2008225836}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._maxValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._regenValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explodeDamage._value
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7464778339797912727, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
       propertyPath: m_Name
       value: Barrel (2)
@@ -3936,7 +4016,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5440846124522934325, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081372060599876905, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4037,7 +4117,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5440846124522934325, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081372060599876905, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4366,7 +4446,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5440846124522934325, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081372060599876905, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5726,6 +5806,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1952046563}
     m_Modifications:
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explosionEffect
+      value: 
+      objectReference: {fileID: 2008225836}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._maxValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._regenValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explodeDamage._value
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7464778339797912727, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
       propertyPath: m_Name
       value: Barrel (4)
@@ -7851,6 +7951,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 560014183069459153, guid: f49c2828a44000644bc9e524ee35033d, type: 3}
   m_PrefabInstance: {fileID: 823626248}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &2008225836 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 560014183069459152, guid: f49c2828a44000644bc9e524ee35033d, type: 3}
+  m_PrefabInstance: {fileID: 823626248}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2023116517
 GameObject:
   m_ObjectHideFlags: 0
@@ -8233,7 +8338,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5440846124522934325, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081372060599876905, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8288,6 +8393,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1952046563}
     m_Modifications:
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explosionEffect
+      value: 
+      objectReference: {fileID: 2008225836}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._maxValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _health._regenValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082416215788300237, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
+      propertyPath: _explodeDamage._value
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7464778339797912727, guid: b5ebc02789be2b441b76af07fe4c54df, type: 3}
       propertyPath: m_Name
       value: Barrel
@@ -8388,10 +8513,6 @@ PrefabInstance:
     - target: {fileID: 7081372060599876905, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8234139383159686430, guid: 1b38d21a8e8038a4d99b87863bf52d95, type: 3}
-      propertyPath: <JumpHeight>k__BackingField._value
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

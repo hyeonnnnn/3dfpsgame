@@ -424,7 +424,7 @@ MonoBehaviour:
   <AngularSpeed>k__BackingField:
     _value: 250
   <JumpHeight>k__BackingField:
-    _value: 0
+    _value: 2
 --- !u!114 &6526112923518009748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +451,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _renderer: {fileID: 7684634134370875538}
   _animator: {fileID: 2289269262851413203}
+  _bloodEffectPrefab: {fileID: 1000013355911406, guid: d32aa916f50cac94db11e6f19821a58f, type: 3}
 --- !u!114 &5587439234146944613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,7 +495,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 5440846124522934325}
   m_Enabled: 1
   m_AgentTypeID: -1372625422
-  m_Radius: 0.5
+  m_Radius: 0.26
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50

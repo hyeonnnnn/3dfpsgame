@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Barrel : MonoBehaviour
+public class Barrel : MonoBehaviour, IDamageable
 {
     [SerializeField] private ConsumableStat _health;
     [SerializeField] private ValueStat _explodeDamage;
@@ -25,18 +25,19 @@ public class Barrel : MonoBehaviour
         _health.Initialize();
     }
 
-    public void TryTakeDamage(float damage)
+    public bool TryTakeDamage(Damage damage)
     {
-        if (_isDead) return;
+        if (_isDead) return false;
 
         TakeDamage(damage);
+        return true;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(Damage damage)
     {
         if (_isDead) return;
 
-        _health.Decrease(damage);
+        _health.Decrease(damage.Value);
         if (_health.Value <= 0)
         {
             Die();
@@ -61,21 +62,29 @@ public class Barrel : MonoBehaviour
 
         Vector3 position = transform.position;
 
+        Damage damage = new Damage
+        {
+            Value = _explodeDamage.Value,
+            Direction = Vector3.up,
+            HitPoint = position,
+            KnockbackForce = _knockbackForce
+        };
+
         // 몬스터 데미지
         Collider[] colliders = Physics.OverlapSphere(position, _explodeRadius, _damageLayer);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].TryGetComponent<Monster>(out Monster monster))
             {
-                monster.TryTakeDamage(new Damage(_explodeDamage.Value, position, _knockbackForce));
+                monster.TryTakeDamage(damage);
             }
             if (colliders[i].TryGetComponent<PlayerController>(out PlayerController player))
             {
-                player.TryTakeDamage(new Damage(_explodeDamage.Value, position, _knockbackForce));
+                player.TryTakeDamage(damage);
             }
             if (colliders[i].TryGetComponent<Barrel>(out Barrel barrel))
             {
-                barrel.TryTakeDamage(_explodeDamage.Value);
+                barrel.TryTakeDamage(damage);
             }
         }
     }

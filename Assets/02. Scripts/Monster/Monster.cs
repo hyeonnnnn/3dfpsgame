@@ -84,13 +84,14 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public void TryTakeDamage(Damage damage)
+    public bool TryTakeDamage(Damage damage)
     {
-        if (State == EMonsterState.Death) return;
+        if (State == EMonsterState.Death) return false;
 
         bool isAlive = _monsterStat.Health.Value - damage.Value > 0f;
         ChangeState(isAlive ? EMonsterState.Hit : EMonsterState.Death);
         _monsterCombat.TryTakeDamage(damage);
+        return true;
     }
 
     private void HandleHitComplete()
