@@ -13,6 +13,11 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField] private GameObject _muzzleFlashPrefab;
     [SerializeField] private Transform _muzzlePoint;
 
+    [Header("라인 렌더러")]
+    [SerializeField] private LineRenderer _lineRenderer;
+    [SerializeField] private float _lineDisplayDuration = 0.05f;
+    [SerializeField] private float _maxRayDistance = 100f;
+
     [SerializeField] private float _fireCoolTime = 0.3f;
     private float _fireTimer = 0f;
     private Camera _mainCamera;
@@ -30,6 +35,10 @@ public class PlayerGunFire : MonoBehaviour
 
     private Animator _animator;
 
+    private EZoomMode _currentZoomMode = EZoomMode.Normal;
+    [SerializeField] private GameObject _normalCrosshair;
+    [SerializeField] private GameObject _zoomInCrosshair;
+
     private void Awake()
     {
         _ammoController = GetComponent<AmmoController>();
@@ -40,6 +49,12 @@ public class PlayerGunFire : MonoBehaviour
     private void Start()
     {
         _mainCamera = Camera.main;
+
+        if (_lineRenderer != null)
+        {
+            _lineRenderer.positionCount = 2;
+            _lineRenderer.enabled = false;
+        }
     }
 
     private void Update()
@@ -50,6 +65,7 @@ public class PlayerGunFire : MonoBehaviour
         {
             TryFire();
         }
+        CheckZoomMode();
     }
 
     private void TryFire()
@@ -75,8 +91,11 @@ public class PlayerGunFire : MonoBehaviour
     {
         bool isHit = Physics.Raycast(ray, out hitInfo);
 
+        Vector3 endPoint;
         if (isHit)
         {
+            endPoint = hitInfo.point;
+
             _hitEffect.transform.position = hitInfo.point;
             _hitEffect.transform.forward = hitInfo.normal;
             _hitEffect.Play();
@@ -95,6 +114,12 @@ public class PlayerGunFire : MonoBehaviour
                 barrel.TakeDamage(_stats.Damage.Value);
             }
         }
+        else
+        {
+            endPoint = ray.origin + ray.direction * _maxRayDistance;
+        }
+
+        DrawBulletTrail(_muzzlePoint.position, endPoint);
 
         _ammoController.ConsumeMagazine();
         // _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
@@ -116,5 +141,40 @@ public class PlayerGunFire : MonoBehaviour
         muzzleEffect.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         muzzleEffect.SetActive(false);
+    }
+
+    private void DrawBulletTrail(Vector3 startPoint, Vector3 endPoint)
+    {
+        if (_lineRenderer == null) return;
+
+        _lineRenderer.SetPosition(0, startPoint);
+        _lineRenderer.SetPosition(1, endPoint);
+        _lineRenderer.enabled = true;
+
+        StartCoroutine(HideBulletTrail_Coroutine());
+    }
+
+    private IEnumerator HideBulletTrail_Coroutine()
+    {
+        yield return new WaitForSeconds(_lineDisplayDuration);
+        _lineRenderer.enabled = false;
+    }
+
+    private void CheckZoomMode()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            _currentZoomMode = EZoomMode.ZoomIn;
+            _normalCrosshair.SetActive(false);
+            _zoomInCrosshair.SetActive(true);
+            Camera.main.fieldOfView = 20f;
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
+            _currentZoomMode = EZoomMode.Normal;
+            _normalCrosshair.SetActive(true);
+            _zoomInCrosshair.SetActive(false);
+            Camera.main.fieldOfView = 60f;
+        }
     }
 }

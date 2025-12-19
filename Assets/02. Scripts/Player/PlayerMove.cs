@@ -122,7 +122,7 @@ public class PlayerMove : MonoBehaviour
 
     private void HandleClickMovement()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Keypad0))
         {
             var ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
