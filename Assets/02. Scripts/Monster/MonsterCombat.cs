@@ -6,7 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Renderer))]
 public class MonsterCombat : MonoBehaviour
 {
-    private const float HIT_RECOVERY_TIME = 1.667f;
+    private const float HIT_RECOVERY_TIME = 1.38f;
 
     public event Action OnHitComplete;
     public event Action OnDeath;

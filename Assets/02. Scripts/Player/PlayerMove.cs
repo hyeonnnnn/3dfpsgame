@@ -32,6 +32,8 @@ public class PlayerMove : MonoBehaviour
     private int _jumpCount = 0;
     private float _yVelocity = 0f;
 
+    public bool IsMoving { get; private set; }
+
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
@@ -89,14 +91,17 @@ public class PlayerMove : MonoBehaviour
             direction.y = 0f;
             direction.Normalize();
 
+            IsMoving = true;
             return direction * _stats.MoveSpeed.Value;
         }
 
         if (_navMeshAgent.hasPath)
         {
+            IsMoving = true;
             return _navMeshAgent.desiredVelocity;
         }
 
+        IsMoving = false;
         return Vector3.zero;
     }
 

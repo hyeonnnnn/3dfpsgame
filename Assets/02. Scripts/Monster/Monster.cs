@@ -26,7 +26,7 @@ public class Monster : MonoBehaviour
     private Vector3 _jumpStartPosition;
     private Vector3 _jumpEndPosition;
     private bool _isJumping = false;
-    private float _jumpDuration = 0.5f;
+    private float _jumpDuration = 1.6667f;
 
 
     private void Awake()
@@ -239,6 +239,8 @@ public class Monster : MonoBehaviour
         }
 
         transform.position = endPos;
+
+        yield return new WaitForSeconds(1.14f);
 
         _isJumping = false;
         _navMeshAgent.isStopped = false;

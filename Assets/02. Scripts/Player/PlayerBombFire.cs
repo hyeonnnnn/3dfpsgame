@@ -26,10 +26,15 @@ public class PlayerBombFire : MonoBehaviour
     private IObjectPool<Bomb> _bombPool;
     private int _maxCount = 15;
 
+    private PlayerMove _playerMove;
+    private Animator _animator;
+
     private void Awake()
     {
         _cameraTransform = Camera.main.transform;
         _bombPool = new ObjectPool<Bomb>(CreateBomb, OnGetBomb, OnReleaseBomb, OnDestroyBomb, maxSize: _maxCount);
+        _playerMove = GetComponent<PlayerMove>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -65,8 +70,11 @@ public class PlayerBombFire : MonoBehaviour
         rigidbody.linearVelocity = Vector3.zero;
         rigidbody.AddForce(_cameraTransform.forward * _throwPower, ForceMode.VelocityChange);
 
-        _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
+        // _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
         _crosshair.Expand();
+
+        string triggerName = _playerMove.IsMoving ? "ThrowRunning" : "ThrowStanding";
+        _animator.SetTrigger(triggerName);
     }
 
     private Bomb CreateBomb()

@@ -97,7 +97,7 @@ public class PlayerGunFire : MonoBehaviour
         }
 
         _ammoController.ConsumeMagazine();
-        _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
+        // _cameraShake.Recoil(_shakeDuration, _shakeMagnitude);
         _crosshair.Expand();
         SpawnMuzzleFlash();
     }
