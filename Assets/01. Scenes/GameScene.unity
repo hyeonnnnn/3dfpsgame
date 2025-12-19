@@ -2937,7 +2937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fireTransform: {fileID: 2023116518}
-  _bombPrefab: {fileID: 765134004314411503, guid: 0e74629c84271dd429f17ab9c3ee21bf, type: 3}
+  _bombPrefab: {fileID: 6891989688388033274, guid: eb3225516446415418a5c365f80bd68f, type: 3}
   _bombMaxcount: 5
   _bombCount: 0
   _bombParent: {fileID: 1558637536}
