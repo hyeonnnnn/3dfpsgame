@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Monster
   - FxTemporaire
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - Barrel
   - MiniMap
   - Effect
-  - 
+  - Ground
   - 
   - 
   - 

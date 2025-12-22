@@ -23,15 +23,15 @@ public class MonsterCombat : MonoBehaviour, IDamageable
     private List<GameObject> _spawnedEffects = new List<GameObject>();
     private Coroutine _hitRecoveryCoroutine;
 
+    private MonsterItemDrop _itemDrop;
+    private bool _isDead = false;
+
     private void Awake()
     {
         _stats = GetComponent<MonsterStat>();
         _agent = GetComponent<NavMeshAgent>();
-
-        if (_animator == null)
-        {
-            _animator = GetComponentInChildren<Animator>();
-        }
+        _itemDrop = GetComponent<MonsterItemDrop>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     public bool TryTakeDamage(Damage damage)
@@ -78,6 +78,9 @@ public class MonsterCombat : MonoBehaviour, IDamageable
 
     private void ProcessDeath()
     {
+        if (_isDead == true) return;
+        _isDead = true;
+
         foreach (GameObject effect in _spawnedEffects)
         {
             if (effect != null)
@@ -88,8 +91,8 @@ public class MonsterCombat : MonoBehaviour, IDamageable
 
         _agent.isStopped = true;
         _agent.ResetPath();
+        _itemDrop.DropItem();
         _animator.SetTrigger("Death");
-
         _spawnedEffects.Clear();
 
         OnDeath?.Invoke();
