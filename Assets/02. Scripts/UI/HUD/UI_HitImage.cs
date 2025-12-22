@@ -12,12 +12,12 @@ public class UI_HitImage : MonoBehaviour
 
     private void OnEnable()
     {
-        _player.OnDamaged += ShowHitEffect;
+        _player.OnHealthChanged += ShowHitEffect;
     }
 
     private void OnDisable()
     {
-        _player.OnDamaged -= ShowHitEffect;
+        _player.OnHealthChanged -= ShowHitEffect;
     }
 
     private void ShowHitEffect()

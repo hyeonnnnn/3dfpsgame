@@ -19,12 +19,12 @@ public class PlayerHealthBar : MonoBehaviour
 
     private void OnEnable()
     {
-        _playerController.OnDamaged += UpdateHealthBar;
+        _playerController.OnHealthChanged += UpdateHealthBar;
     }
 
     private void OnDisable()
     {
-        _playerController.OnDamaged -= UpdateHealthBar;
+        _playerController.OnHealthChanged -= UpdateHealthBar;
     }
 
     private void UpdateHealthBar()

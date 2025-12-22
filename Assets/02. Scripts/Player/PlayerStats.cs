@@ -13,7 +13,7 @@ public class PlayerStats : MonoBehaviour
 
     [field: SerializeField] public ValueStat Damage { get; private set; }
 
-    public static event Action OnPlayerDataChanged;
+    public event Action OnPlayerDataChanged;
 
     private void Start()
     {

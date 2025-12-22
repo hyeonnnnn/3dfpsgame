@@ -14,12 +14,12 @@ public class UI_PlayerStats : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerStats.OnPlayerDataChanged += Refresh;
+        _stats.OnPlayerDataChanged += Refresh;
     }
 
     private void OnDestroy()
     {
-        PlayerStats.OnPlayerDataChanged -= Refresh;
+        _stats.OnPlayerDataChanged -= Refresh;
     }
 
     private void Refresh()

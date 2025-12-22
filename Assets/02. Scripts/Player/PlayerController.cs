@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _knockbackDuration = 0.2f;
 
     public Action OnPlayerDeath;
-    public Action OnDamaged;
+    public Action OnHealthChanged;
 
     private void Awake()
     {
@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(Damage damage)
     {
-        OnDamaged?.Invoke();
+        OnHealthChanged?.Invoke();
 
         _playerStats.Health.Decrease(damage.Value);
         StartCoroutine(Hit_Coroutine(damage.Direction, damage.KnockbackForce));
