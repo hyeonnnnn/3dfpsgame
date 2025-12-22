@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [System.Serializable]
@@ -11,8 +12,11 @@ public class ConsumableStat
     public float Value => _value;
     public float RegenValue => _regenValue;
 
-    public void Initialize()
+    private static event Action _onDataChanged;
+
+    public void Initialize(Action onDataChanged = null)
     {
+        _onDataChanged = onDataChanged;
         SetMaxValue(_maxValue);
     }
 
@@ -24,6 +28,9 @@ public class ConsumableStat
         {
             _value = _maxValue;
         }
+
+        _onDataChanged?.Invoke();
+        Debug.Log(_onDataChanged);
     }
 
     public bool TryConsume(float amount)
@@ -37,11 +44,15 @@ public class ConsumableStat
     public void Consume(float amount)
     {
         _value -= amount;
+
+        _onDataChanged?.Invoke();
     }
 
     public void IncreaseMax(float amount)
     {
         _maxValue += amount;
+
+        _onDataChanged?.Invoke();
     }
 
     public void Increase(float amount)
@@ -52,15 +63,21 @@ public class ConsumableStat
         {
             _value = _maxValue;
         }
+
+        _onDataChanged?.Invoke();
     }
     public void SetMaxValue(float amount)
     {
         _maxValue = amount;
+
+        _onDataChanged?.Invoke();
     }
 
     public void SetValue(float amount)
     {
         _value = amount;
+
+        _onDataChanged?.Invoke();
     }
 
     public void Decrease(float amount)
@@ -70,5 +87,7 @@ public class ConsumableStat
         {
             _value = 0;
         }
+
+        _onDataChanged?.Invoke();
     }
 }

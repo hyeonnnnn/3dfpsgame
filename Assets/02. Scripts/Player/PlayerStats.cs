@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
@@ -12,10 +13,12 @@ public class PlayerStats : MonoBehaviour
 
     [field: SerializeField] public ValueStat Damage { get; private set; }
 
+    public static event Action OnDataChanged;
+
     private void Start()
     {
-        Stamina.Initialize();
-        Health.Initialize();
+        Stamina.Initialize(OnDataChanged);
+        Health.Initialize(OnDataChanged);
     }
 
     private void Update()
