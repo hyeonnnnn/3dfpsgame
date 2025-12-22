@@ -12,7 +12,7 @@ public class ConsumableStat
     public float Value => _value;
     public float RegenValue => _regenValue;
 
-    private static event Action _onDataChanged;
+    private event Action _onDataChanged;
 
     public void Initialize(Action onDataChanged = null)
     {
@@ -30,7 +30,6 @@ public class ConsumableStat
         }
 
         _onDataChanged?.Invoke();
-        Debug.Log(_onDataChanged);
     }
 
     public bool TryConsume(float amount)

@@ -13,12 +13,12 @@ public class PlayerStats : MonoBehaviour
 
     [field: SerializeField] public ValueStat Damage { get; private set; }
 
-    public static event Action OnDataChanged;
+    public static event Action OnPlayerDataChanged;
 
     private void Start()
     {
-        Stamina.Initialize(OnDataChanged);
-        Health.Initialize(OnDataChanged);
+        Stamina.Initialize(OnPlayerDataChanged);
+        Health.Initialize(OnPlayerDataChanged);
     }
 
     private void Update()
