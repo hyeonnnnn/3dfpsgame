@@ -37,7 +37,7 @@ public class MonsterCombat : MonoBehaviour, IDamageable
     public bool TryTakeDamage(Damage damage)
     {
         _stats.Health.Decrease(damage.Value);
-        _bloodEffectPrefab .transform.forward = damage.Nomral;
+        _bloodEffectPrefab.transform.forward = damage.Normal;
 
         if (_stats.Health.Value > 0f)
         {

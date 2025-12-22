@@ -7,6 +7,7 @@ public class Monster : MonoBehaviour
     private const float ORIGIN_ARRIVAL_THRESHOLD = 1f;
     private const float JUMP_HEIGHT_OFFSET = 0.5f;
     private const float PARABOLA_MULTIPLIER = 4f;
+    private const float JUMP_LANDING_DELAY = 1.14f;
 
     public EMonsterState State = EMonsterState.Idle;
 
@@ -26,7 +27,7 @@ public class Monster : MonoBehaviour
     private Vector3 _jumpStartPosition;
     private Vector3 _jumpEndPosition;
     private bool _isJumping = false;
-    private float _jumpDuration = 1.6667f;
+    private const float JUMP_ANIMATION_DURATION = 1.6667f;
 
 
     private void Awake()
@@ -90,8 +91,7 @@ public class Monster : MonoBehaviour
 
         bool isAlive = _monsterStat.Health.Value - damage.Value > 0f;
         ChangeState(isAlive ? EMonsterState.Hit : EMonsterState.Death);
-        _monsterCombat.TryTakeDamage(damage);
-        return true;
+        return _monsterCombat.TryTakeDamage(damage);
     }
 
     private void HandleHitComplete()
@@ -225,10 +225,10 @@ public class Monster : MonoBehaviour
         float heightDifference = endPos.y - startPos.y;
         float actualJumpHeight = _monsterStat.JumpHeight.Value + Mathf.Max(0, heightDifference * JUMP_HEIGHT_OFFSET);
 
-        while (elapsed < _jumpDuration)
+        while (elapsed < JUMP_ANIMATION_DURATION)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / _jumpDuration;
+            float t = elapsed / JUMP_ANIMATION_DURATION;
             Vector3 horizontalPos = Vector3.Lerp(startPos, endPos, t);
 
             float parabola = PARABOLA_MULTIPLIER * t * (1f - t);
@@ -241,7 +241,7 @@ public class Monster : MonoBehaviour
 
         transform.position = endPos;
 
-        yield return new WaitForSeconds(1.14f);
+        yield return new WaitForSeconds(JUMP_LANDING_DELAY);
 
         _isJumping = false;
         _navMeshAgent.isStopped = false;
@@ -287,14 +287,24 @@ public class Monster : MonoBehaviour
         return Vector3.Distance(transform.position, _player.transform.position);
     }
 
-    public PlayerController GetPlayerController()
+    private Vector3 GetDirectionToPlayer()
     {
-        return _playerController;
+        return (_player.transform.position - transform.position).normalized;
     }
 
-    public Vector3 GetDirectionToPlayer()
+    public void DealDamageToPlayer()
     {
-        if (_player == null) return Vector3.zero;
-        return (_player.transform.position - transform.position).normalized;
+        if (State != EMonsterState.Attack) return;
+        if (_playerController == null) return;
+
+        Damage damage = new Damage(
+            _monsterStat.AttackDamage.Value,
+            GetDirectionToPlayer(),
+            _player.transform.position,
+            _monsterStat.KnockbackForce.Value,
+            Vector3.up
+        );
+
+        _playerController.TakeDamage(damage);
     }
 }

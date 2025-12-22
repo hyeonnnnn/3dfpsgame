@@ -38,6 +38,8 @@ public class PlayerGunFire : MonoBehaviour
     private EZoomMode _currentZoomMode = EZoomMode.Normal;
     [SerializeField] private GameObject _normalCrosshair;
     [SerializeField] private GameObject _zoomInCrosshair;
+    private const float ZOOM_IN_FOV = 20f;
+
 
     private void Awake()
     {
@@ -168,7 +170,7 @@ public class PlayerGunFire : MonoBehaviour
             _currentZoomMode = EZoomMode.Normal;
             _normalCrosshair.SetActive(true);
             _zoomInCrosshair.SetActive(false);
-            Camera.main.fieldOfView = 60f;
+            Camera.main.fieldOfView = ZOOM_IN_FOV;
         }
     }
 }

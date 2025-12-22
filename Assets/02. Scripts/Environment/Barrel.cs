@@ -70,21 +70,12 @@ public class Barrel : MonoBehaviour, IDamageable
             KnockbackForce = _knockbackForce
         };
 
-        // 몬스터 데미지
         Collider[] colliders = Physics.OverlapSphere(position, _explodeRadius, _damageLayer);
         for (int i = 0; i < colliders.Length; i++)
         {
-            if (colliders[i].TryGetComponent<Monster>(out Monster monster))
+            if (colliders[i].TryGetComponent<IDamageable>(out IDamageable damageable))
             {
-                monster.TryTakeDamage(damage);
-            }
-            if (colliders[i].TryGetComponent<PlayerController>(out PlayerController player))
-            {
-                player.TryTakeDamage(damage);
-            }
-            if (colliders[i].TryGetComponent<Barrel>(out Barrel barrel))
-            {
-                barrel.TryTakeDamage(damage);
+                damageable.TryTakeDamage(damage);
             }
         }
     }

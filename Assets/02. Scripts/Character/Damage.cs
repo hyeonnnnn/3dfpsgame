@@ -6,7 +6,7 @@ public struct Damage
     public Vector3 Direction;
     public Vector3 HitPoint;
     public float KnockbackForce;
-    public Vector3 Nomral;
+    public Vector3 Normal;
 
     public Damage(float value, Vector3 direction, Vector3 hitPoint, float knockbackForce, Vector3 normal)
     {
@@ -14,6 +14,6 @@ public struct Damage
         Direction = direction;
         HitPoint = hitPoint;
         KnockbackForce = knockbackForce;
-        Nomral = normal;
+        Normal = normal;
     }
 }
