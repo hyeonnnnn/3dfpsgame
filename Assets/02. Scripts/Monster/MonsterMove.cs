@@ -1,5 +1,3 @@
-using System;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,7 +10,6 @@ public class MonsterMove : MonoBehaviour
 
     private float _gravity = -9.81f;
     private float _yVelocity = 0f;
-
 
     private void Awake()
     {

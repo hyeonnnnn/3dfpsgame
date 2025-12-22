@@ -1,93 +1,108 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(Renderer))]
-public class MonsterCombat : MonoBehaviour
+public class MonsterCombat : MonoBehaviour, IDamageable
 {
+    private const float HIT_RECOVERY_TIME = 1.38f;
+
     public event Action OnHitComplete;
     public event Action OnDeath;
 
     private MonsterStat _stats;
     private NavMeshAgent _agent;
-    private Renderer _renderer;
 
-    private Color _hitColor = Color.red;
-    private Color _originalColor;
-    private Coroutine _currentCoroutine;
+    [SerializeField] private Renderer _renderer;
+    [SerializeField] private Animator _animator;
+
+    [SerializeField] private GameObject _bloodEffectPrefab;
+
+    private List<GameObject> _spawnedEffects = new List<GameObject>();
+    private Coroutine _hitRecoveryCoroutine;
+
+    private MonsterItemDrop _itemDrop;
+    private bool _isDead = false;
 
     private void Awake()
     {
-        _renderer = GetComponent<Renderer>();
         _stats = GetComponent<MonsterStat>();
         _agent = GetComponent<NavMeshAgent>();
-    }
-
-    private void Start()
-    {
-        _originalColor = _renderer.material.color;
+        _itemDrop = GetComponent<MonsterItemDrop>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     public bool TryTakeDamage(Damage damage)
     {
         _stats.Health.Decrease(damage.Value);
-
-        _agent.isStopped = true;
-        _agent.ResetPath();
-
-        if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
+        _bloodEffectPrefab.transform.forward = damage.Normal;
 
         if (_stats.Health.Value > 0f)
         {
-            _currentCoroutine = StartCoroutine(Hit_Coroutine(damage.Direction, damage.KnockbackForce));
+            ProcessHit(damage);
             return true;
         }
         else
         {
-            _currentCoroutine = StartCoroutine(Death_Coroutine());
+            ProcessDeath();
             return true;
         }
+    }
+
+    private void ProcessHit(Damage damage)
+    {
+        _agent.isStopped = true;
+        _agent.ResetPath();
+        _animator.SetTrigger("Hit");
+
+        GameObject effect = Instantiate(_bloodEffectPrefab, damage.HitPoint, Quaternion.identity, transform);
+        _spawnedEffects.Add(effect);
+
+        if (_hitRecoveryCoroutine != null)
+        {
+            StopCoroutine(_hitRecoveryCoroutine);
+        }
+        _hitRecoveryCoroutine = StartCoroutine(HitRecovery_Coroutine());
+    }
+
+    private IEnumerator HitRecovery_Coroutine()
+    {
+        yield return new WaitForSeconds(HIT_RECOVERY_TIME);
+
+        _agent.isStopped = false;
+        _hitRecoveryCoroutine = null;
+        OnHitComplete?.Invoke();
+    }
+
+    private void ProcessDeath()
+    {
+        if (_isDead == true) return;
+        _isDead = true;
+
+        foreach (GameObject effect in _spawnedEffects)
+        {
+            if (effect != null)
+            {
+                effect.SetActive(false);
+            }
+        }
+
+        _agent.isStopped = true;
+        _agent.ResetPath();
+        _itemDrop.DropItem();
+        _animator.SetTrigger("Death");
+        _spawnedEffects.Clear();
+
+        OnDeath?.Invoke();
     }
 
     public void PerformAttack(PlayerController playerController, Vector3 direction)
     {
         if (playerController != null)
         {
-            Damage damage = new Damage(_stats.AttackDamage.Value, direction, _stats.KnockbackForce.Value);
-            playerController.TakeDamage(damage);
+            _animator.SetTrigger("Attack");
         }
-    }
-
-    private IEnumerator Hit_Coroutine(Vector3 direction, float knockbackForce)
-    {
-        float elapsed = 0f;
-        direction.y = 0f;
-        direction.Normalize();
-        Vector3 knockbackVelocity = direction * knockbackForce;
-
-        _renderer.material.color = _hitColor;
-
-        while (elapsed < _stats.KnockbackDuration.Value)
-        {
-            elapsed += Time.deltaTime;
-            float progress = elapsed / _stats.KnockbackDuration.Value;
-            Vector3 velocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, progress);
-
-            yield return null;
-        }
-
-        _renderer.material.color = _originalColor;
-
-        yield return new WaitForSeconds(0.1f);
-        _currentCoroutine = null;
-        OnHitComplete?.Invoke();
-    }
-
-    private IEnumerator Death_Coroutine()
-    {
-        OnDeath?.Invoke();
-        yield return new WaitForSeconds(0.2f);
-        Destroy(gameObject);
     }
 }

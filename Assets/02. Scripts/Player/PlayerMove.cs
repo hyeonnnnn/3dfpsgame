@@ -18,6 +18,7 @@ public class PlayerMove : MonoBehaviour
     public MoveConfig _config;
 
     private CharacterController _characterController;
+    private Animator _animator;
     private PlayerStats _stats;
     private Camera _mainCamera;
     private Transform _cameraTransform;
@@ -31,11 +32,15 @@ public class PlayerMove : MonoBehaviour
     private int _jumpCount = 0;
     private float _yVelocity = 0f;
 
+    public bool IsMoving { get; private set; }
+
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<PlayerStats>();
+        _animator = GetComponentInChildren<Animator>();
+
         _mainCamera = Camera.main;
         _cameraTransform = _mainCamera.transform;
     }
@@ -78,19 +83,25 @@ public class PlayerMove : MonoBehaviour
             _navMeshAgent.ResetPath();
             _moveIndicator.Hide();
 
-            Vector3 direction = new Vector3(moveX, 0, moveZ).normalized;
+            Vector3 direction = new Vector3(moveX, 0, moveZ);
+            _animator.SetFloat("Speed", direction.magnitude);
+            direction.Normalize();
+
             direction = _cameraTransform.TransformDirection(direction);
             direction.y = 0f;
             direction.Normalize();
 
+            IsMoving = true;
             return direction * _stats.MoveSpeed.Value;
         }
 
         if (_navMeshAgent.hasPath)
         {
+            IsMoving = true;
             return _navMeshAgent.desiredVelocity;
         }
 
+        IsMoving = false;
         return Vector3.zero;
     }
 
@@ -111,7 +122,7 @@ public class PlayerMove : MonoBehaviour
 
     private void HandleClickMovement()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Keypad0))
         {
             var ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 

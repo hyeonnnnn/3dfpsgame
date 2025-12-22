@@ -58,6 +58,6 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         OnPlayerDeath?.Invoke();
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

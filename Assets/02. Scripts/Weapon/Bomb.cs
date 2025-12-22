@@ -26,8 +26,6 @@ public class Bomb : MonoBehaviour
 
         for (int i = 0; i < colliders.Length; i++)
         {
-            Monster monster = colliders[i].GetComponent<Monster>();
-            if (monster == null) continue;
 
             Vector3 direction = (colliders[i].transform.position - position).normalized;
 
@@ -36,8 +34,19 @@ public class Bomb : MonoBehaviour
             distance = Mathf.Max(distance, 1f);
             float finalDamage = _attackDamage / distance;
 
-            Damage damage = new Damage(finalDamage, direction, _konckbackForce);
-            monster.TryTakeDamage(damage);
+            IDamageable damageable = colliders[i].GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                Vector3 hitPoint = colliders[i].ClosestPoint(position);
+                Damage damage = new Damage()
+                {
+                    Value = finalDamage,
+                    Direction = direction,
+                    HitPoint = hitPoint,
+                    KnockbackForce = _konckbackForce
+                };
+                damageable.TryTakeDamage(damage);
+            }
         }
 
         ReleaseToPool();
