@@ -28,7 +28,6 @@ public class MonsterHealthBar : MonoBehaviour
 
     private Vector3 _originalLocalPosition;
     private Tweener _shakeTweener;
-    private float _lastHealth = -1;
     private Coroutine _delayCoroutine;
     private Coroutine _hitEffectCoroutine;
 
@@ -42,21 +41,30 @@ public class MonsterHealthBar : MonoBehaviour
         _mainCamera = Camera.main;
     }
 
+    private void OnEnable()
+    {
+        _stat.OnHealthChanged += Refresh;
+    }
+
+    private void OnDisable()
+    {
+        _stat.OnHealthChanged -= Refresh;
+    }
+
     private void LateUpdate()
     {
-        if (_lastHealth != _stat.Health.Value)
-        {
-            _lastHealth = _stat.Health.Value;
-            _guageImage.fillAmount = _stat.Health.Value / _stat.Health.MaxValue;
-
-            if (_delayCoroutine != null) StopCoroutine(_delayCoroutine);
-            if (_hitEffectCoroutine != null) StopCoroutine(_hitEffectCoroutine);
-
-            _delayCoroutine = StartCoroutine(DelayGauge_Coroutine());
-            _hitEffectCoroutine = StartCoroutine(HitEffect_Coroutine());
-        }
-
         _healthBarTransform.forward = _mainCamera.transform.forward;
+    }
+
+    private void Refresh()
+    {
+        _guageImage.fillAmount = _stat.Health.Value / _stat.Health.MaxValue;
+
+        if (_delayCoroutine != null) StopCoroutine(_delayCoroutine);
+        if (_hitEffectCoroutine != null) StopCoroutine(_hitEffectCoroutine);
+
+        _delayCoroutine = StartCoroutine(DelayGauge_Coroutine());
+        _hitEffectCoroutine = StartCoroutine(HitEffect_Coroutine());
     }
 
     private IEnumerator DelayGauge_Coroutine()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [System.Serializable]
@@ -7,68 +8,79 @@ public class ConsumableStat
     [SerializeField] private float _value;
     [SerializeField] private float _regenValue;
 
-    public float MaxValue => _maxValue;
-    public float Value => _value;
+    public float MaxValue
+    {
+        get => _maxValue;
+        private set
+        {
+            _maxValue = Mathf.Max(0, value); // 0 이상
+            Value = _value;
+            Notify();
+        }
+    }
+
+    public float Value
+    {
+        get => _value;
+        private set
+        {
+            _value = Mathf.Clamp(value, 0, _maxValue); // 0 ~ 최대치
+            Notify();
+        }
+    }
+
     public float RegenValue => _regenValue;
 
-    public void Initialize()
+    private event Action _onDataChanged;
+
+    private void Notify() => _onDataChanged?.Invoke();
+
+    public void Initialize(Action onDataChanged = null)
     {
-        SetMaxValue(_maxValue);
+        _onDataChanged = onDataChanged;
+        MaxValue = _maxValue;
+        Value = _value;
     }
 
     public void Regenerate(float time)
     {
-        _value += _regenValue * time;
-
-        if (_value > _maxValue)
-        {
-            _value = _maxValue;
-        }
+        Value += _regenValue * time;
     }
 
     public bool TryConsume(float amount)
     {
         if (_value - amount < 0) return false;
-
-        Consume(amount);
+        Value -= amount;
         return true;
     }
 
     public void Consume(float amount)
     {
-        _value -= amount;
+        Value -= amount;
     }
 
     public void IncreaseMax(float amount)
     {
-        _maxValue += amount;
+        MaxValue += amount;
     }
 
     public void Increase(float amount)
     {
-        _value += amount;
-
-        if (_value > _maxValue)
-        {
-            _value = _maxValue;
-        }
+        Value += amount;
     }
+
     public void SetMaxValue(float amount)
     {
-        _maxValue = amount;
+        MaxValue = amount;
     }
 
     public void SetValue(float amount)
     {
-        _value = amount;
+        Value = amount;
     }
 
     public void Decrease(float amount)
     {
-        _value -= amount;
-        if (_value < 0)
-        {
-            _value = 0;
-        }
+        Value -= amount;
     }
 }

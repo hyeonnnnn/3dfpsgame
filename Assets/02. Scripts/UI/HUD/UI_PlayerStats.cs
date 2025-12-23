@@ -7,8 +7,24 @@ public class UI_PlayerStats : MonoBehaviour
     [SerializeField] private Slider _healthSlider;
     [SerializeField] private Slider _staminaSlider;
 
-    private void Update()
+    private void Start()
     {
+        Refresh();
+    }
+
+    private void OnEnable()
+    {
+        _stats.OnPlayerDataChanged += Refresh;
+    }
+
+    private void OnDisable()
+    {
+        _stats.OnPlayerDataChanged -= Refresh;
+    }
+
+    private void Refresh()
+    {
+        Debug.Log("UI_PlayerStats: Refreshing UI");
         _healthSlider.value = _stats.Health.Value / _stats.Health.MaxValue;
         _staminaSlider.value = _stats.Stamina.Value / _stats.Stamina.MaxValue;
     }

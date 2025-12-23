@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class MonsterStat : MonoBehaviour
 {
@@ -14,8 +15,15 @@ public class MonsterStat : MonoBehaviour
     [field: SerializeField] public ValueStat AngularSpeed { get; private set; }
     [field: SerializeField] public ValueStat JumpHeight { get; private set; }
 
+    public event Action OnHealthChanged;
+
     private void Start()
     {
-        Health.Initialize();
+        Health.Initialize(NotifyHealthChanged);
+    }
+
+    private void NotifyHealthChanged()
+    {
+        OnHealthChanged?.Invoke();
     }
 }
