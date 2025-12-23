@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 
 public class GameManager : MonoBehaviour
@@ -13,6 +15,8 @@ public class GameManager : MonoBehaviour
 
     
     [SerializeField] private PlayerController _playerController;
+    [SerializeField] private UI_OptionPopup _optionPopupUI;
+  
 
     private const float ReadyDuration = 2f;
 
@@ -46,6 +50,43 @@ public class GameManager : MonoBehaviour
         OnGameStateChange?.Invoke(_state);
 
         StartCoroutine(GameStart_Coroutine());
+
+
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+            _optionPopupUI.Show();
+        }
+    }
+
+    private void Pause()
+    {
+        Time.timeScale = 0f;
+        // UnlockCursor();
+    }
+
+    public void Continue()
+    {
+        Time.timeScale = 1f;
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
+    }
+
+    public void Quit()
+    {
+        #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+        #else
+                Application.Quit(); // 어플리케이션 종료
+        #endif
     }
 
     private IEnumerator GameStart_Coroutine()
@@ -61,5 +102,4 @@ public class GameManager : MonoBehaviour
         _state = EGameState.GameOver;
         OnGameStateChange?.Invoke(_state);
     }
-
 }
