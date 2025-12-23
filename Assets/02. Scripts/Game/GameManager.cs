@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
@@ -50,8 +49,6 @@ public class GameManager : MonoBehaviour
         OnGameStateChange?.Invoke(_state);
 
         StartCoroutine(GameStart_Coroutine());
-
-
     }
 
     private void Update()
@@ -77,7 +74,7 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("LoadingScene");
     }
 
     public void Quit()
@@ -85,7 +82,7 @@ public class GameManager : MonoBehaviour
         #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
         #else
-                Application.Quit(); // 어플리케이션 종료
+                Application.Quit();
         #endif
     }
 

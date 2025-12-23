@@ -86,7 +86,7 @@ public class LoginScene : MonoBehaviour
         }
 
         // 로그인 성공
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("LoadingScene");
     }
 
     private void Register()
