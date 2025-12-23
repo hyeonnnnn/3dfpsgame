@@ -17,8 +17,13 @@ public class PlayerStats : MonoBehaviour
 
     private void Start()
     {
-        Stamina.Initialize(OnPlayerDataChanged);
-        Health.Initialize(OnPlayerDataChanged);
+        Stamina.Initialize(NotifyPlayerDataChanged);
+        Health.Initialize(NotifyPlayerDataChanged);
+    }
+
+    private void NotifyPlayerDataChanged()
+    {
+        OnPlayerDataChanged?.Invoke();
     }
 
     private void Update()

@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float _knockbackDuration = 0.2f;
 
-    public Action OnPlayerDeath;
-    public Action OnHealthChanged;
+    public event Action OnPlayerDeath;
+    public event Action OnHealthChanged;
 
     private void Awake()
     {
