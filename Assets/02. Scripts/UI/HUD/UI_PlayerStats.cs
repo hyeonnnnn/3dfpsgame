@@ -24,7 +24,6 @@ public class UI_PlayerStats : MonoBehaviour
 
     private void Refresh()
     {
-        Debug.Log("UI_PlayerStats: Refreshing UI");
         _healthSlider.value = _stats.Health.Value / _stats.Health.MaxValue;
         _staminaSlider.value = _stats.Stamina.Value / _stats.Stamina.MaxValue;
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour
 
     
     [SerializeField] private PlayerController _playerController;
+    [SerializeField] private UI_OptionPopup _optionPopupUI;
+  
 
     private const float ReadyDuration = 2f;
 
@@ -48,6 +51,41 @@ public class GameManager : MonoBehaviour
         StartCoroutine(GameStart_Coroutine());
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+            _optionPopupUI.Show();
+        }
+    }
+
+    private void Pause()
+    {
+        Time.timeScale = 0f;
+        // UnlockCursor();
+    }
+
+    public void Continue()
+    {
+        Time.timeScale = 1f;
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("LoadingScene");
+    }
+
+    public void Quit()
+    {
+        #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+        #else
+                Application.Quit();
+        #endif
+    }
+
     private IEnumerator GameStart_Coroutine()
     {
         yield return new WaitForSeconds(ReadyDuration);
@@ -61,5 +99,4 @@ public class GameManager : MonoBehaviour
         _state = EGameState.GameOver;
         OnGameStateChange?.Invoke(_state);
     }
-
 }
