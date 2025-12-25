@@ -1,30 +1,27 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UI_OptionPopup : MonoBehaviour
 {
     [SerializeField] private Button _continueButton;
-    [SerializeField] private Button _RetryButton;
-    [SerializeField] private Button _ExitButton;
+    [SerializeField] private Button _retryButton;
+    [SerializeField] private Button _exitButton;
 
     public void Show()
     {
-        Debug.Log("Show Option Popup");
         gameObject.SetActive(true);
     }
 
     public void Hide()
     {
-        Debug.Log("Hide Option Popup");
         gameObject.SetActive(false);
     }
 
     private void Start()
     {
         _continueButton.onClick.AddListener(GameContinue);
-        _RetryButton.onClick.AddListener(GameRetry);
-        _ExitButton.onClick.AddListener(GameExit);
+        _retryButton.onClick.AddListener(GameRetry);
+        _exitButton.onClick.AddListener(GameExit);
     }
 
     private void GameContinue()

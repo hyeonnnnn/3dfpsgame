@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("LoadingScene");
+        SceneManager.LoadScene(SceneNames.LoadingScene);
     }
 
     public void Quit()

@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Text;
 
 public class LoginScene : MonoBehaviour
 {
@@ -90,7 +89,7 @@ public class LoginScene : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene("LoadingScene");
+        SceneManager.LoadScene(SceneNames.LoadingScene);
     }
 
     private void Register()
@@ -166,6 +165,7 @@ public class LoginScene : MonoBehaviour
         if (IsLengthValid(password) == false)
         {
             message = "비밀번호는 7자 이상 20자 이하로 설정해야 합니다.";
+            return false;
         }
 
         if (HasSpecialAtLeastOne(password) == false)

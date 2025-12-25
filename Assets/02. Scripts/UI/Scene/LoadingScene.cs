@@ -16,12 +16,12 @@ public class LoadingScene : MonoBehaviour
 
     private IEnumerator LoadScene_Coroutine()
     {
-        AsyncOperation ao = SceneManager.LoadSceneAsync("GameScene");
+        AsyncOperation ao = SceneManager.LoadSceneAsync(SceneNames.GameScene);
 
-        // 로드되는 씬 모습이 보이지 않도록 설정
+        // 로드되는 씬 모습이 보이지 않도록 설정한다.
         ao.allowSceneActivation = false;
 
-        // 로드가 완료될 때까지 진행
+        // 로드가 완료될 때까지 진행한다.
         while (!ao.isDone)
         {
             _progressSliderUI.value = ao.progress;
