@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
         if (_playerController != null)
             _playerController.OnPlayerDeath += GameOver;
 
+        Time.timeScale = 0;
         _state = EGameState.Ready;
         OnGameStateChange?.Invoke(_state);
 
@@ -88,14 +89,15 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameStart_Coroutine()
     {
-        yield return new WaitForSeconds(ReadyDuration);
-
+        yield return new WaitForSecondsRealtime(ReadyDuration);
+        Time.timeScale = 1;
         _state = EGameState.Playing;
         OnGameStateChange?.Invoke(_state);
     }
 
     private void GameOver()
     {
+        Time.timeScale = 0;
         _state = EGameState.GameOver;
         OnGameStateChange?.Invoke(_state);
     }
