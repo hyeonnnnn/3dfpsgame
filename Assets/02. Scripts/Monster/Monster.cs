@@ -72,8 +72,6 @@ public class Monster : MonoBehaviour
         if (State == EMonsterState.Death) return;
         if (State == EMonsterState.Hit) return;
 
-        _monsterMovement.ApplyGravity();
-
         switch (State)
         {
             case EMonsterState.Idle: Idle(); break;
@@ -276,8 +274,10 @@ public class Monster : MonoBehaviour
                 _animator.SetTrigger("Jump");
                 break;
             case EMonsterState.Hit:
+                _monsterMovement.Stop();
                 break;
             case EMonsterState.Death:
+                _monsterMovement.Stop();
                 break;
         }
     }

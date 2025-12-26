@@ -7,21 +7,22 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Renderer))]
 public class MonsterCombat : MonoBehaviour, IDamageable
 {
-    private const float HIT_RECOVERY_TIME = 1.38f;
-
     public event Action OnHitComplete;
     public event Action OnDeath;
 
     private MonsterStat _stats;
-    private NavMeshAgent _agent;
+    private MonsterMove _movement;
 
     [SerializeField] private Renderer _renderer;
     [SerializeField] private Animator _animator;
 
+
     [SerializeField] private GameObject _bloodEffectPrefab;
 
+    private NavMeshAgent _agent;
     private List<GameObject> _spawnedEffects = new List<GameObject>();
     private Coroutine _hitRecoveryCoroutine;
+    private const float HIT_RECOVERY_TIME = 1.667f;
 
     private MonsterItemDrop _itemDrop;
     private bool _isDead = false;
@@ -29,9 +30,10 @@ public class MonsterCombat : MonoBehaviour, IDamageable
     private void Awake()
     {
         _stats = GetComponent<MonsterStat>();
-        _agent = GetComponent<NavMeshAgent>();
+        _movement = GetComponent<MonsterMove>();
         _itemDrop = GetComponent<MonsterItemDrop>();
         _animator = GetComponentInChildren<Animator>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     public bool TryTakeDamage(Damage damage)
@@ -53,8 +55,7 @@ public class MonsterCombat : MonoBehaviour, IDamageable
 
     private void ProcessHit(Damage damage)
     {
-        _agent.isStopped = true;
-        _agent.ResetPath();
+        _movement.Stop();
         _animator.SetTrigger("Hit");
 
         GameObject effect = Instantiate(_bloodEffectPrefab, damage.HitPoint, Quaternion.identity, transform);
@@ -69,9 +70,10 @@ public class MonsterCombat : MonoBehaviour, IDamageable
 
     private IEnumerator HitRecovery_Coroutine()
     {
+        _agent.isStopped = true;
         yield return new WaitForSeconds(HIT_RECOVERY_TIME);
-
         _agent.isStopped = false;
+
         _hitRecoveryCoroutine = null;
         OnHitComplete?.Invoke();
     }
@@ -89,8 +91,7 @@ public class MonsterCombat : MonoBehaviour, IDamageable
             }
         }
 
-        _agent.isStopped = true;
-        _agent.ResetPath();
+        _movement.Stop();
         _itemDrop.DropItem();
         _animator.SetTrigger("Death");
         _spawnedEffects.Clear();

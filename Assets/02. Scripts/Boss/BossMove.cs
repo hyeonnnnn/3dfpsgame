@@ -30,6 +30,7 @@ public class BossMove : MonoBehaviour
     {
         _agent.isStopped = true;
         _agent.ResetPath();
+        _agent.velocity = Vector3.zero;
     }
 
     public void LookAt(Vector3 targetPosition)
