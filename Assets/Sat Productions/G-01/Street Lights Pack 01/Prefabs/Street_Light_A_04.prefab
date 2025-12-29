@@ -188,7 +188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7403103681514552382}
   - component: {fileID: 6167811156961755312}
-  - component: {fileID: 3396427321875970514}
+  - component: {fileID: 6871328713823406814}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -223,7 +223,7 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 0.9495443, b: 0.7688679, a: 1}
   m_Intensity: 20
-  m_Range: 15
+  m_Range: 20
   m_SpotAngle: 33.7
   m_InnerSpotAngle: 1
   m_CookieSize: 10
@@ -261,7 +261,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -276,7 +276,7 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &3396427321875970514
+--- !u!114 &6871328713823406814
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -570,7 +570,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6196997583944502434}
   - component: {fileID: 6076950271883591056}
-  - component: {fileID: 801092662487261840}
+  - component: {fileID: 8886012132697666938}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -605,7 +605,7 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 0.9495443, b: 0.7688679, a: 1}
   m_Intensity: 20
-  m_Range: 15
+  m_Range: 20
   m_SpotAngle: 33.7
   m_InnerSpotAngle: 1
   m_CookieSize: 10
@@ -643,7 +643,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -658,7 +658,7 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &801092662487261840
+--- !u!114 &8886012132697666938
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -691,7 +691,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5619026798832348742}
   - component: {fileID: 617255379598458064}
-  - component: {fileID: 6466734827348614279}
+  - component: {fileID: 2620901642943556866}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -726,7 +726,7 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 0.9495443, b: 0.7688679, a: 1}
   m_Intensity: 20
-  m_Range: 15
+  m_Range: 20
   m_SpotAngle: 33.7
   m_InnerSpotAngle: 1
   m_CookieSize: 10
@@ -764,7 +764,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -779,7 +779,7 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &6466734827348614279
+--- !u!114 &2620901642943556866
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -812,7 +812,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7317314480405198656}
   - component: {fileID: 3924291216440335634}
-  - component: {fileID: 262453965129064327}
+  - component: {fileID: 636097221845650298}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -847,7 +847,7 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 0.9495443, b: 0.7688679, a: 1}
   m_Intensity: 20
-  m_Range: 15
+  m_Range: 20
   m_SpotAngle: 33.7
   m_InnerSpotAngle: 1
   m_CookieSize: 10
@@ -885,7 +885,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -900,7 +900,7 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &262453965129064327
+--- !u!114 &636097221845650298
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

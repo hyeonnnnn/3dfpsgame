@@ -23,7 +23,7 @@ public class PlayerMove : MonoBehaviour
     private Camera _mainCamera;
     private Transform _cameraTransform;
 
-    [SerializeField] private MoveIndicator _moveIndicator;
+    // [SerializeField] private MoveIndicator _moveIndicator;
     private NavMeshAgent _navMeshAgent;
     private RaycastHit _hitInfo = new RaycastHit();
     private const float INPUT_THRESHOLD = 0.01f;
@@ -81,7 +81,7 @@ public class PlayerMove : MonoBehaviour
         if (hasKeyboardInput)
         {
             _navMeshAgent.ResetPath();
-            _moveIndicator.Hide();
+            // _moveIndicator.Hide();
 
             Vector3 direction = new Vector3(moveX, 0, moveZ);
             _animator.SetFloat("Speed", direction.magnitude);
@@ -129,7 +129,7 @@ public class PlayerMove : MonoBehaviour
             if (Physics.Raycast(ray.origin, ray.direction, out _hitInfo, _hitDistance))
             {
                 _navMeshAgent.destination = _hitInfo.point;
-                _moveIndicator.Show(_hitInfo.point);
+                // _moveIndicator.Show(_hitInfo.point);
             }
         }
     }
